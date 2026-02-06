@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuning Retro - Klasszikus Autók Tuning Világa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Alap stílusok */
+        :root {
+            --primary: #e63946;
+            --primary-dark: #c1121f;
+            --secondary: #1d3557;
+            --light: #f1faee;
+            --dark: #0d1b2a;
+            --gray: #8d99ae;
+            --accent: #fca311;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Fejléc */
+        header {
+            background-color: var(--secondary);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .logo i {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        
+        nav a:hover {
+            background-color: var(--primary);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Hero rész */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1553440569-bcc63803a83d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1925&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 5rem 0;
+            text-align: center;
+        }
+        
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            border: 2px solid white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: white;
+            color: var(--secondary);
+        }
+        
+        /* Szeciók */
+        section {
+            padding: 4rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-title p {
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Autó modellek kártyák */
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .model-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .model-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .model-img {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .model-content {
+            padding: 1.5rem;
+        }
+        
+        .model-content h3 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .model-content p {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .model-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tag {
+            background-color: var(--light);
+            color: var(--secondary);
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        /* Kategóriák */
+        .categories {
+            background-color: var(--light);
+        }
+        
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .category-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .category-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        /* Újdonságok */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .news-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .news-img {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .news-content {
+            padding: 1.5rem;
+        }
+        
+        .news-date {
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Kereső */
+        .search-section {
+            background-color: var(--secondary);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .search-box {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .search-box h3 {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .search-form select, .search-form input {
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        /* Lábléc */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0 1.5rem;
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-column h4 {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-column a {
+            color: #ccc;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-column a:hover {
+            color: var(--primary);
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: #333;
+            border-radius: 50%;
+            color: white;
+            transition: var(--transition);
+        }
+        
+        .social-icons a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #333;
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 992px) {
+            .hero h2 {
+                font-size: 2.5rem;
+            }
+            
+            .models-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .header-container {
+                position: relative;
+            }
+            
+            .mobile-nav {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: var(--secondary);
+                padding: 1rem;
+                box-shadow: var(--shadow);
+                display: none;
+            }
+            
+            .mobile-nav.active {
+                display: block;
+            }
+            
+            .mobile-nav ul {
+                flex-direction: column;
+            }
+            
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .search-form select, .search-form input {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero {
+                padding: 3rem 0;
+            }
+            
+            section {
+                padding: 3rem 0;
+            }
+            
+            .models-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fejléc -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-tachometer-alt"></i>
+                <h1>Tuning Retro</h1>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="#home">Főoldal</a></li>
+                    <li><a href="#models">Modellek</a></li>
+                    <li><a href="#categories">Alkatrészek</a></li>
+                    <li><a href="#news">Hírek</a></li>
+                    <li><a href="#search">Keresés</a></li>
+                    <li><a href="#contact">Kapcsolat</a></li>
+                </ul>
+            </nav>
+            
+            <nav class="mobile-nav" id="mobileNav">
+                <ul>
+                    <li><a href="#home">Főoldal</a></li>
+                    <li><a href="#models">Modellek</a></li>
+                    <li><a href="#categories">Alkatrészek</a></li>
+                    <li><a href="#news">Hírek</a></li>
+                    <li><a href="#search">Keresés</a></li>
+                    <li><a href="#contact">Kapcsolat</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero rész -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h2>Klasszikus Autók Tuning Világa</h2>
+            <p>Fedezd fel a tuning lehetőségeket ikonikus 80-as, 90-es és 2000-es évekbeli autókra: BMW, Golf, Civic, Corolla és még sok más!</p>
+            <a href="#models" class="btn">Modellek böngészése</a>
+            <a href="#search" class="btn btn-secondary">Alkatrész keresés</a>
+        </div>
+    </section>
+
+    <!-- Modellek szekció -->
+    <section id="models">
+        <div class="container">
+            <div class="section-title">
+                <h2>Népszerű Tuning Modellek</h2>
+                <p>Válassz a leggyakrabban tuningolt klasszikus modellek közül</p>
+            </div>
+            
+            <div class="models-grid">
+                <!-- BMW modellek -->
+                <div class="model-card">
+                    <div class="model-img" style="background-image: url('https://images.unsplash.com/photo-1593941707882-a5bba5338fe2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="model-content">
+                        <h3>BMW E30</h3>
+                        <p>Az ikonikus 80-as évekbeli BMW, tökéletes alap drift és street tuning projektekhez.</p>
+                        <div class="model-tags">
+                            <span class="tag">Német</span>
+                            <span class="tag">1982-1994</span>
+                            <span class="tag">Sport</span>
+                        </div>
+                        <a href="#" class="btn" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;">Alkatrészek</a>
+                    </div>
+                </div>
+                
+                <!-- Volkswagen modellek -->
+                <div class="model-card">
+                    <div class="model-img" style="background-image: url('https://images.unsplash.com/photo-1553440569-bcc63803a83d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="model-content">
+                        <h3>VW Golf Mk2</h3>
+                        <p>A hot hatch ikon, rendkívül népszerű tuning kültéri és motor tuning projektekre.</p>
+                        <div class="model-tags">
+                            <span class="tag">Német</span>
+                            <span class="tag">1983-1992</span>
+                            <span class="tag">Hot Hatch</span>
+                        </div>
+                        <a href="#" class="btn" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;">Alkatrészek</a>
+                    </div>
+                </div>
+                
+                <!-- Honda modellek -->
+                <div class="model-card">
+                    <div class="model-img" style="background-image: url('https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="model-content">
+                        <h3>Honda Civic EG</h3>
+                        <p>5. generációs Civic, VTEC motorokkal, hihetetlen tuning potenciállal.</p>
+                        <div class="model-tags">
+                            <span class="tag">Japán</span>
+                            <span class="tag">1991-1995</span>
+                            <span class="tag">Sport</span>
+                        </div>
+                        <a href="#" class="btn" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;">Alkatrészek</a>
+                    </div>
+                </div>
+                
+                <!-- Toyota modellek -->
+                <div class="model-card">
+                    <div class="model-img" style="background-image: url('https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="model-content">
+                        <h3>Toyota AE86</h3>
+                        <p>A drift és touge kultusz autója, ikonikus a Keiichi Tsuchiya által.</p>
+                        <div class="model-tags">
+                            <span class="tag">Japán</span>
+                            <span class="tag">1983-1987</span>
+                            <span class="tag">Drift</span>
+                        </div>
+                        <a href="#" class="btn" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;">Alkatrészek</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="#" class="btn">Összes modell megtekintése (50+)</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kategóriák szekció -->
+    <section class="categories" id="categories">
+        <div class="container">
+            <div class="section-title">
+                <h2>Tuning Kategóriák</h2>
+                <p>Fedezd fel a tuning lehetőségeket kategóriánként</p>
+            </div>
+            
+            <div class="categories-grid">
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Motor Tuning</h3>
+                    <p>Turbók, kompresszorok, chip tuning, kipufogórendszerek, motor swap lehetőségek</p>
+                    <a href="#" class="btn" style="margin-top: 1rem;">Részletek</a>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <h3>Futómű & Fék</h3>
+                    <p>Coilover kit-ek, sportrugók, nagyobb féknyergek, stabilizátor rudak</p>
+                    <a href="#" class="btn" style="margin-top: 1rem;">Részletek</a>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-spray-can"></i>
+                    </div>
+                    <h3>Külső Tuning</h3>
+                    <p>Test tuning, spoílerek, egyedi fényszórók, szoknyák, festés</p>
+                    <a href="#" class="btn" style="margin-top: 1rem;">Részletek</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hírek szekció -->
+    <section id="news">
+        <div class="container">
+            <div class="section-title">
+                <h2>Legfrissebb Hírek & Tutorialok</h2>
+                <p>Tartsd naprakészen magad a retro tuning világában</p>
+            </div>
+            
+            <div class="news-grid">
+                <div class="news-card">
+                    <div class="news-img" style="background-image: url('https://images.unsplash.com/photo-1507136566006-cfc505b114fc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="news-content">
+                        <div class="news-date">2023. október 15.</div>
+                        <h4>Hogyan végezz ECU chip tuningot E30 BMW-n</h4>
+                        <p>Részletes útmutató a gyári ECU átprogramozásához teljesítményfokozás érdekében.</p>
+                        <a href="#">Tovább olvasom →</a>
+                    </div>
+                </div>
+                
+                <div class="news-card">
+                    <div class="news-img" style="background-image: url('https://images.unsplash.com/photo-1566471473881-1d33d46e8b6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="news-content">
+                        <div class="news-date">2023. október 10.</div>
+                        <h4>Legjobb coilover kit-ek Golf Mk2-höz</h4>
+                        <p>Összehasonlítás és telepítési tippek a legnépszerűbb futómű upgrade-ekről.</p>
+                        <a href="#">Tovább olvasom →</a>
+                    </div>
+                </div>
+                
+                <div class="news-card">
+                    <div class="news-img" style="background-image: url('https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="news-content">
+                        <div class="news-date">2023. október 5.</div>
+                        <h4>Motor swap guide: Honda K20 Civic EG-be</h4>
+                        <p>Lépésről lépésre útmutató a modern K20 motor beépítéséhez klasszikus Civicbe.</p>
+                        <a href="#">Tovább olvasom →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kereső szekció -->
+    <section class="search-section" id="search">
+        <div class="container">
+            <div class="search-box">
+                <h3>Alkatrész Kereső</h3>
+                <p>Találd meg a tökéletes alkatrészt autódhoz</p>
+                
+                <form class="search-form">
+                    <select id="brandSelect">
+                        <option value="">Válassz márkát</option>
+                        <option value="bmw">BMW</option>
+                        <option value="vw">Volkswagen</option>
+                        <option value="honda">Honda</option>
+                        <option value="toyota">Toyota</option>
+                        <option value="audi">Audi</option>
+                        <option value="mercedes">Mercedes</option>
+                        <option value="nissan">Nissan</option>
+                        <option value="mazda">Mazda</option>
+                    </select>
+                    
+                    <select id="modelSelect">
+                        <option value="">Válassz modellt</option>
+                        <!-- Modellek JavaScript-tel töltődnek -->
+                    </select>
+                    
+                    <select id="categorySelect">
+                        <option value="">Válassz kategóriát</option>
+                        <option value="engine">Motor tuning</option>
+                        <option value="suspension">Futómű & fék</option>
+                        <option value="exterior">Külső tuning</option>
+                        <option value="interior">Belső tuning</option>
+                        <option value="wheels">Kerekek & gumik</option>
+                    </select>
+                    
+                    <button type="submit" class="btn">Keresés</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lábléc -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h4>Tuning Retro</h4>
+                    <p>A klasszikus autók tuning világának első számú magyar közössége és alkatrész forrása.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Népszerű Márkák</h4>
+                    <ul>
+                        <li><a href="#">BMW tuning</a></li>
+                        <li><a href="#">Volkswagen tuning</a></li>
+                        <li><a href="#">Honda tuning</a></li>
+                        <li><a href="#">Toyota tuning</a></li>
+                        <li><a href="#">Audi tuning</a></li>
+                        <li><a href="#">Nissan tuning</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Gyors linkek</h4>
+                    <ul>
+                        <li><a href="#home">Főoldal</a></li>
+                        <li><a href="#models">Modellek</a></li>
+                        <li><a href="#categories">Alkatrészek</a></li>
+                        <li><a href="#news">Hírek & útmutatók</a></li>
+                        <li><a href="#search">Keresés</a></li>
+                        <li><a href="#">ÁSZF</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Kapcsolat</h4>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> 1234 Tuning utca, Budapest</li>
+                        <li><i class="fas fa-phone"></i> +36 1 234 5678</li>
+                        <li><i class="fas fa-envelope"></i> info@tuningretro.hu</li>
+                        <li><i class="fas fa-clock"></i> H-P: 9:00-17:00</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 Tuning Retro - Klasszikus autók tuning világa. Minden jog fenntartva.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileNav.classList.toggle('active');
+            mobileMenuBtn.innerHTML = mobileNav.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+        
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.mobile-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNav.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+        
+        // Model data for search functionality
+        const modelsByBrand = {
+            bmw: ["E21", "E30", "E28 (524td/518i/528i/535i)", "E34", "2002", "E24", "E23", "Z3"],
+            vw: ["Golf Mk1", "Golf Mk2", "Golf Mk3", "Golf Mk4", "Passat B3/B4", "Corrado", "Scirocco"],
+            honda: ["Civic 3G", "Civic 4G (EF)", "Civic 5G (EG)", "Civic 6G (EK)", "Prelude", "Integra", "CR-X"],
+            toyota: ["Corolla AE86", "Corolla E90/E100", "Celica", "Supra A70/A80", "MR2", "Starlet"],
+            audi: ["80/90 B2/B3/B4", "100/200 C3", "Coupe", "Quattro"],
+            mercedes: ["W123", "W124", "190E (W201)", "R107 SL"],
+            nissan: ["Silvia S13", "Silvia S14", "Skyline R32/R33/R34", "300ZX", "Sunny/Pulsar"],
+            mazda: ["MX-5 NA/NB", "RX-7 FC/FD", "323/Familia"]
+        };
+        
+        // Update model options based on selected brand
+        const brandSelect = document.getElementById('brandSelect');
+        const modelSelect = document.getElementById('modelSelect');
+        
+        brandSelect.addEventListener('change', function() {
+            const selectedBrand = this.value;
+            
+            // Clear existing options
+            modelSelect.innerHTML = '<option value="">Válassz modellt</option>';
+            
+            // Add new options based on selected brand
+            if (selectedBrand && modelsByBrand[selectedBrand]) {
+                modelsByBrand[selectedBrand].forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model.toLowerCase().replace(/\s+/g, '-');
+                    option.textContent = model;
+                    modelSelect.appendChild(option);
+                });
+            }
+        });
+        
+        // Search form submission
+        document.querySelector('.search-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const brand = document.getElementById('brandSelect').value;
+            const model = document.getElementById('modelSelect').value;
+            const category = document.getElementById('categorySelect').value;
+            
+            if (!brand || !model || !category) {
+                alert('Kérjük, válassz ki minden mezőt a kereséshez!');
+                return;
+            }
+            
+            // In a real application, this would redirect to search results
+            alert(`Keresés: ${brand.toUpperCase()} - ${model} - ${category}\n\n(Éles rendszerben ez átirányítana a keresési eredmények oldalára)`);
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
