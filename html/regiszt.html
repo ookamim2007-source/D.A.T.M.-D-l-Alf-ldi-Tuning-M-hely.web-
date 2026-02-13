@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bejelentkezés</title>
+</head>
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        overflow: hidden;
+        width: 100vw;
+        height: 100vh;
+        overflow-x: hidden;
+        font-family: "Inter", sans-serif;
+        color: #fff;
+        background: #000;
+    }
+    .background {
+            position: fixed;
+            inset: 0;
+            background: url("../Kepek/pexels-albinberlin-919073.png") center/cover no-repeat;
+            filter: blur(8px) brightness(1.1);
+            transform: scale(1.01);
+            z-index: 0;
+    }
+    .form-container {
+        position: relative;
+        z-index: 3;
+        max-width: 500px;
+        height: 65vh;
+        margin: 120px auto 0;
+        background: rgba(90, 90, 90, 0.75);
+        border-radius: 40px;
+        padding: 30px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-container h2 {
+        text-align: center;
+        margin-bottom: 5vh;
+        color: #ffffff;
+        font-size: 42px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group input {
+        margin-bottom: 2vh;
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 15px;
+        background: rgba(50, 50, 50, 0.8);
+        color: #fff;
+        font-size: 19px;
+    }
+    .form-group input:focus {
+        
+        outline: none;
+        box-shadow: 0 0 5px #adadad;
+    }
+    .form-group input::placeholder {
+        color: #acacac;
+    }
+    .btnRegiszt {
+        width: 80%;
+        padding: 12px;
+        background-color: #202020;
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-size: 17px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+    }
+    .btnBejel {
+        width: 60%;
+        position:relative ;
+        padding: 12px;
+        background: #202020;
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-size: 17px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btnBejel:hover{
+        transition: 0.5s;
+        width: 63%;
+    }
+    .btnRegiszt:hover{
+        transition: 0.5s;
+        width: 83%;
+    }
+
+    .gombok{
+        margin-top: 3vh;
+        text-align: center;
+    }
+
+    .megjelenito{
+        user-select: none;
+         float: right;
+         margin-right: 1.4vh;
+         margin-top: -6vh;
+         position: relative;
+         z-index: 2;
+         color: #adadad;
+         font-size: 25px;
+     }
+     
+     .megjelenito:hover{
+         cursor: pointer;
+     }
+</style>
+<body>
+    <div class="background"></div>
+    <div class="form-container">
+        <h2>Regisztráció</h2>
+        <div class="form-group">
+            <input type="email" placeholder="Email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <input type="text" placeholder="Felhasználónév" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <input type="password" placeholder="Jelszó" id="password" name="password" required>
+            <span class="megjelenito" onclick="myFunction()">👁</span>
+        </div>
+        <div class="form-group">
+            <input type="password" placeholder="Jelszó még egyszer" id="password2" name="password" required>
+            <span class="megjelenito" onclick="myFunction2()">👁</span>
+        </div>
+        <div class="gombok">
+            <button type="submit" class="btnRegiszt">Regisztráció</button>
+            <button type="submit" class="btnBejel">Bejelentkezés</button>
+        </div>   
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const button = document.querySelector(".btnBejel");
+    
+            if (button) {
+                button.addEventListener("click", function () {
+                    window.location.href = "../html/bejelentkezes.html";
+                });
+            }
+
+        });
+    </script>
+
+    <!--  altalanos js  -->
+    <script src="../js/script.js"></script>
+</body>
+</html>
