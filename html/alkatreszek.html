@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <title>Alkatrészek</title>
+</head>
+<style>
+    .focim{
+        font-size: 42px;
+        font-style: italic;
+        letter-spacing: 4.2vh;
+        font-weight:bolder;
+    }
+    .ikonok{
+        font-size: 40px;
+    }
+    .navbar{
+        background-color: blue;
+    }
+    #cim{
+        margin-top: 8vh;
+        margin-bottom: 12vh;
+        background-color: yellow;
+        text-align: center;    
+        font-size: 7.2vh;   
+        letter-spacing: 4vh; 
+    }
+    .kartya{
+        background-color: aqua;
+        height: 40vh;
+        margin-bottom: 5vh;
+        border-radius: 12px;
+
+    }
+    .Ksor{
+        gap: 8vh;
+    }
+
+    
+
+    .oldal{
+        height: 170%; /* Full-height: remove this if you want "auto" height */
+        width: 160px; /* Set the width of the sidebar */
+        position:absolute ; /* Fixed Sidebar (stay in place on scroll) */
+        z-index: 1; /* Stay on top */
+        top: 79; /* Stay at the top */
+        left: 0;
+        background-color: #575757; /* Black */
+        overflow-x: hidden; /* Disable horizontal scroll */
+        padding-top: 20px;
+      }
+      
+      /* The navigation menu links */
+      .oldal a {
+        padding: 6px 8px 6px 16px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+      }
+      
+      /* When you mouse over the navigation links, change their color */
+      .oldal a:hover {
+        color: #f1f1f1;
+      }
+      
+      /* Style page content */
+      .main {
+        margin-left: 160px; /* Same as the width of the sidebar */
+        padding: 0px 10px;
+      }
+      
+      /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+      @media screen and (max-height: 450px) {
+        .sidenav {padding-top: 15px;}
+        .sidenav a {font-size: 18px;}
+      }
+
+
+
+
+</style>
+<body>
+    <div class="text-center">
+        <div class="row navbar">
+            <div class="col-9 focim">D.A.T.M.</div>
+            <div class="col-3 ikonok">
+                
+            </div>
+        </div>
+    </div>
+    <div class="oldal">
+    
+        <a href="#">About</a>
+        <a href="#">Services</a>
+        <a href="#">Clients</a>
+        <a href="#">Contact</a>
+    </div>
+    <div class="main">
+        <div id="cim">
+            <p>dsadas</p>
+        </div>
+        <div class="text-center">
+            <div class="row Ksor justify-content-md-center">
+                <div class="col-3 kartya">ikonok</div>
+                <div class="col-3 kartya">ikonok</div>
+                <div class="col-3 kartya">ikonok</div>
+            </div>
+            <div class="row  Ksor justify-content-md-center">
+                <div class="col-3 kartya">ikonok</div>
+                <div class="col-3 kartya">ikonok</div>
+                <div class="col-3 kartya">ikonok</div>
+            </div>
+            <div class="row Ksor justify-content-md-center">
+                <div class="col-3 kartya">ikonok</div>
+                <div class="col-3 kartya">ikonok</div>
+                <div class="col-3 kartya">ikonok</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
