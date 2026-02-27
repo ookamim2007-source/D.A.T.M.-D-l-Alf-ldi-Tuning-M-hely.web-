@@ -7,6 +7,15 @@
     <title>Alkatrészek</title>
 </head>
 <style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        overflow-x: hidden;
+      }
     .focim{
         margin-left: 3%;
         font-size: 42px;
@@ -99,6 +108,17 @@
         margin-right: 15px;
       }
 
+      .kereso{
+        border-radius: 15px;
+        max-width: 120px;
+      }
+
+      .keresoikon{
+        margin-left: 5px;
+        color: #f1f1f1;
+        height: 20px;
+        width: 20px;
+      }
 
 </style>
 <body>
@@ -143,11 +163,18 @@
         </div>
     </div>
     <div class="oldal">
-    
-        <a href="#">About</a>
-        <a href="#">Services</a>
-        <a href="#">Clients</a>
-        <a href="#">Contact</a>
+        <input type="search" id="site-search" class="kereso" name="q"/><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search keresoikon" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+          </svg>
+        <a href="#">Honda</a>
+        <a href="#">Toyota</a>
+        <a href="#">Mitsubitsi</a>
+        <a href="#">Subaru</a>
+        <a href="#">BMW</a>
+        <a href="#">Mercedes</a>
+        <a href="#">Porsche</a>
+        <a href="#">Ford</a>
+        <a href="#">VolksWagen</a>
     </div>
     <div class="main">
         <div id="cim">
