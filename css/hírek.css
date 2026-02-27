@@ -1,0 +1,154 @@
+  * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        overflow-x: hidden;
+      }
+    .focim{
+        margin-left: 3%;
+        font-size: 42px;
+        font-style: italic;
+        letter-spacing: 3.4vh;
+        font-weight:bolder;
+    }
+    .ikonok{
+        font-size: 40px;
+        margin-right: -7vh;
+    }
+
+    .ikonok a{
+        text-decoration: none;
+        color: black;
+    }
+
+    .ikkon:hover{
+        transform: scale(1.3);
+        transition: 0.3s;
+        color: rgb(255, 255, 255);
+    }
+
+    .navbar{
+        background-color: rgb(214, 214, 214);
+    }
+    #cim{
+        margin-top: 8vh;
+        margin-bottom: 12vh;
+        background-color: yellow;
+        text-align: center;    
+        font-size: 7.2vh;   
+        letter-spacing: 4vh; 
+    }
+    .kartya{
+        background-color: aqua;
+        height: 40vh;
+        margin-bottom: 5vh;
+        border-radius: 12px;
+        
+
+    }
+    .Ksor{
+        gap: 8vh;
+    }
+
+    
+
+    .oldal{
+        height: 170%; /* Full-height: remove this if you want "auto" height */
+        width: 160px; /* Set the width of the sidebar */
+        position:absolute ; /* Fixed Sidebar (stay in place on scroll) */
+        z-index: 1; /* Stay on top */
+        top: 79; /* Stay at the top */
+        left: 0;
+        background-color: #575757; /* Black */
+        overflow-x: hidden; /* Disable horizontal scroll */
+        padding-top: 20px;
+      }
+      
+      /* The navigation menu links */
+      .oldal a {
+        padding: 6px 8px 6px 16px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+      }
+      
+      /* When you mouse over the navigation links, change their color */
+      .oldal a:hover {
+        color: #f1f1f1;
+      }
+      
+      /* Style page content */
+      .main {
+        margin-left: 160px; /* Same as the width of the sidebar */
+        padding: 0px 10px;
+      }
+      
+      /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+      @media screen and (max-height: 450px) {
+        .sidenav {padding-top: 15px;}
+        .sidenav a {font-size: 18px;}
+      }
+
+      .ikkon{
+        height: 38px;
+        width: 38px;
+        margin-left: 15px;
+        margin-right: 15px;
+      }
+
+      .kereso{
+        border-radius: 15px;
+        max-width: 120px;
+      }
+
+      .keresoikon{
+        margin-left: 5px;
+        color: #f1f1f1;
+        height: 20px;
+        width: 20px;
+      }
+
+       .szoveg1{
+        background-color: aqua;
+        width: 830px;
+        height: 1000px;
+        right: 90%;
+        border-radius: 1px solid;
+        border-width: 2px solid;
+        border: 1px solid;
+        overflow: scroll;
+        
+       }
+      
+ .kep {
+        background-color: yellow;
+        width: 900px;
+        right: 90%;
+        border-radius: 1px solid;
+        border-width: 2px solid;
+        border: 1px solid;
+       
+       }
+
+       .hir1{
+        background-color: aliceblue;
+        width: 100px;
+        height: 100px;
+
+
+       }
+
+       .hirport{
+
+        display: flex;
+        justify-content: flex-start;
+        align-content: center;
+        flex-direction: row;
+
+
+       }
+      
