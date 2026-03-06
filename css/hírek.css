@@ -6,6 +6,10 @@
 
       body {
         overflow-x: hidden;
+        background-image: url(/kepek/back.jpg);
+       background-repeat: no-repeat;
+       background-size: cover;
+        
       }
     .focim{
         margin-left: 3%;
@@ -13,6 +17,8 @@
         font-style: italic;
         letter-spacing: 3.4vh;
         font-weight:bolder;
+        color: #f1f1f1;
+        
     }
     .ikonok{
         font-size: 40px;
@@ -21,28 +27,28 @@
 
     .ikonok a{
         text-decoration: none;
-        color: black;
+        color: rgb(255, 255, 255);
     }
 
     .ikkon:hover{
         transform: scale(1.3);
         transition: 0.3s;
-        color: rgb(255, 255, 255);
+        color: rgb(165, 165, 165);
     }
 
     .navbar{
-        background-color: rgb(214, 214, 214);
+       background-color: #7e354daf; background-image: radial-gradient(circle, #B32134 0%, #7c0a028e 100%); box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
     }
     #cim{
         margin-top: 8vh;
         margin-bottom: 12vh;
-        background-color: yellow;
+        background-color: rgba(255, 255, 255, 0);
         text-align: center;    
         font-size: 7.2vh;   
         letter-spacing: 4vh; 
     }
     .kartya{
-        background-color: aqua;
+        background-color: rgba(255, 255, 255, 0);
         height: 40vh;
         margin-bottom: 5vh;
         border-radius: 12px;
@@ -56,15 +62,16 @@
     
 
     .oldal{
-        height: 170%; /* Full-height: remove this if you want "auto" height */
+        height:91.5%; /* Full-height: remove this if you want "auto" height */
         width: 160px; /* Set the width of the sidebar */
         position:absolute ; /* Fixed Sidebar (stay in place on scroll) */
         z-index: 1; /* Stay on top */
         top: 79; /* Stay at the top */
         left: 0;
-        background-color: #575757; /* Black */
+        background-color: #555555; /* Black */
         overflow-x: hidden; /* Disable horizontal scroll */
         padding-top: 20px;
+        
       }
       
       /* The navigation menu links */
@@ -72,13 +79,13 @@
         padding: 6px 8px 6px 16px;
         text-decoration: none;
         font-size: 25px;
-        color: #818181;
+        color: #dbdbdb;
         display: block;
       }
       
       /* When you mouse over the navigation links, change their color */
       .oldal a:hover {
-        color: #f1f1f1;
+        color: #8f8e8e;
       }
       
       /* Style page content */
@@ -112,34 +119,21 @@
         width: 20px;
       }
 
-       .szoveg1{
-        background-color: aqua;
-        width: 830px;
-        height: 1000px;
-        right: 90%;
-        border-radius: 1px solid;
-        border-width: 2px solid;
-        border: 1px solid;
-        overflow: scroll;
-        
-       }
+
       
- .kep {
-        background-color: yellow;
-        width: 900px;
-        right: 90%;
-        border-radius: 1px solid;
-        border-width: 2px solid;
-        border: 1px solid;
-       
-       }
+
 
        .hir1{
-        background-color: aliceblue;
-        width: 100px;
-        height: 100px;
-
-
+        
+         background-color: #7e354daf; background-image: radial-gradient(circle, #B32134 0%, #7c0a028e 100%); box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px);
+        width: 1000px;
+        height: 500px;
+        overflow: scroll;
+        color: white;
+       
+        
        }
 
        .hirport{
@@ -151,4 +145,24 @@
 
 
        }
+
+       .HIRCIM{
+        color: #ffffff;
+        background-color: #7e354daf; background-image: radial-gradient(circle, #B32134 0%, #7c0a028e 100%); box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px); 
+        align-items: center;
+        display: flex;
+        justify-content: center;
+         
+
+
+       }
       
+
+       .kép1{
+
+        
+
+
+       }
