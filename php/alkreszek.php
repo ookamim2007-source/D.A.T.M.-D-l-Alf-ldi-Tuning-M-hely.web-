@@ -92,14 +92,16 @@ if ($selected_gyarto > 0) {
         body {
             overflow-x: hidden;
             background-color: #f5f5f5;
+
         }
         
         .focim {
             margin-left: 3%;
-            font-size: 42px;
+            font-size: 35px;
             font-style: italic;
             letter-spacing: 3.4vh;
             font-weight: bolder;
+            width:100;
         }
         
         .focim a {
@@ -108,8 +110,8 @@ if ($selected_gyarto > 0) {
         }
         
         .ikonok {
-            font-size: 40px;
-            margin-right: -7vh;
+            font-size: 34px;
+            margin-right: -18vh;
         }
 
         .ikonok a {
@@ -118,15 +120,13 @@ if ($selected_gyarto > 0) {
         }
 
         .ikkon {
-            height: 38px;
-            width: 38px;
+            height: 30px;
+            width: 30px;
             margin-left: 15px;
             margin-right: 15px;
-            transition: transform 0.3s;
         }
 
         .ikkon:hover {
-            transform: scale(1.3);
             color: rgb(255, 255, 255);
         }
 
@@ -136,12 +136,12 @@ if ($selected_gyarto > 0) {
             top: 0;
             width: 100%;
             z-index: 1000;
+            height:8.7%;
         }
         
         #cim {
             margin-top: 100px;
             margin-bottom: 40px;
-            background-color: yellow;
             text-align: center;    
             font-size: 7.2vh;   
             letter-spacing: 4vh;
@@ -149,7 +149,10 @@ if ($selected_gyarto > 0) {
         }
         
         .kartya {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #7E354D; 
+            background-image: radial-gradient(circle, #B32134 0%, #7C0A02 100%);
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+
             color: white;
             min-height: 200px;
             margin-bottom: 20px;
@@ -177,7 +180,9 @@ if ($selected_gyarto > 0) {
         }
         
         .kartya-ures {
-            background: linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%);
+            background-color: #7E354D; 
+            background-image: radial-gradient(circle, #B32134 0%, #7C0A02 100%);
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
             font-size: 18px;
         }
         
@@ -200,7 +205,7 @@ if ($selected_gyarto > 0) {
         }
 
         .oldal {
-            height: calc(100vh - 80px);
+            height: calc(100vh - 8.7%);
             width: 250px;
             position: fixed;
             z-index: 900;
@@ -229,25 +234,55 @@ if ($selected_gyarto > 0) {
         }
         
         .oldal a.active {
-            background-color: #3498db;
-            border-left-color: #f1c40f;
+            background-color: #943c5a; 
+            background-image: radial-gradient(circle, #c42a3f 0%, #a31409 100%);
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
             color: white;
         }
 
         .oldal h3 {
-            color: #f1c40f;
+            color:#f11e3a;
             padding: 0 20px;
             margin: 20px 0 10px;
             font-size: 18px;
             text-transform: uppercase;
             letter-spacing: 2px;
+            font-weight: bolder;
         }
-        
+        /*
         .main {
             margin-left: 250px;
             padding: 20px 30px;
+            background-image: url("../Kepek/honda.jpg");
+            background-attachment: fixed;
+            background-position-x: right;
+            background-color: #af1106;
+            background-repeat: no-repeat;
         }
-        
+        */
+        .main {
+            margin-left: 250px;
+            padding: 20px 30px;
+            padding-top: 10px;
+            
+            background: 
+                url('../Kepek/honda.jpg') no-repeat right center / contain, 
+                linear-gradient(135deg, #BA0C01 0%, #2E0B09 100%);
+    
+                /* Az illesztés elmosása, hogy ne legyen éles vonal a kép széle és az átmenet között */
+                position: relative;
+                background-size: contain, cover;
+        }
+        .main::before{
+            content: '';
+            position: absolute;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(186, 12, 1, 0) 60%, rgba(46, 11, 9, 0.1) 100%);
+            pointer-events: none;
+        }
+
         .search-container {
             padding: 0 20px 20px;
             display: flex;
@@ -295,8 +330,9 @@ if ($selected_gyarto > 0) {
         }
         
         .gyarto-fejlec.active {
-            background-color: #3498db;
-            border-left-color: #f1c40f;
+            background-color: #7c0e1d; 
+            background-image: radial-gradient(circle, #a8071d 0%, #4e0b07 100%);
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);;
         }
         
         .gyarto-fejlec i {
@@ -372,7 +408,7 @@ if ($selected_gyarto > 0) {
             <div class="col-9 focim">
                 <a href="?">D.A.T.M. Tuning műhely</a>
             </div>
-            <div class="col-3 ikonok d-flex justify-content-end">
+            <div class="col-3 ikonok d-flex">
                 <a href="#">
                     <i class="bi bi-moon-stars ikkon"></i>
                 </a>
