@@ -83,6 +83,19 @@ if ($selected_gyarto > 0) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>D.A.T.M. Tuning műhely - Alkatrészek</title>
     <style>
+
+        @font-face {
+            font-family: "Blippo";
+            src: url("https://db.onlinewebfonts.com/t/1e19a0b3f53570e0d33e8ec3d346f071.eot");
+            src: url("https://db.onlinewebfonts.com/t/1e19a0b3f53570e0d33e8ec3d346f071.eot?#iefix") format("embedded-opentype"),
+                url("https://db.onlinewebfonts.com/t/1e19a0b3f53570e0d33e8ec3d346f071.woff2") format("woff2"),
+                url("https://db.onlinewebfonts.com/t/1e19a0b3f53570e0d33e8ec3d346f071.woff") format("woff"),
+                url("https://db.onlinewebfonts.com/t/1e19a0b3f53570e0d33e8ec3d346f071.ttf") format("truetype"),
+                url("https://db.onlinewebfonts.com/t/1e19a0b3f53570e0d33e8ec3d346f071.svg#BlippoBlaOutP") format("svg");
+            font-weight: normal;
+            font-style: normal;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -92,7 +105,7 @@ if ($selected_gyarto > 0) {
         body {
             overflow-x: hidden;
             background-color: #f5f5f5;
-
+            font-family: "Blippo", fantasy;
         }
         
         .focim {
@@ -106,7 +119,7 @@ if ($selected_gyarto > 0) {
         
         .focim a {
             text-decoration: none;
-            color: black;
+            color: white;
         }
         
         .ikonok {
@@ -116,7 +129,7 @@ if ($selected_gyarto > 0) {
 
         .ikonok a {
             text-decoration: none;
-            color: black;
+            color: white;
         }
 
         .ikkon {
@@ -127,11 +140,11 @@ if ($selected_gyarto > 0) {
         }
 
         .ikkon:hover {
-            color: rgb(255, 255, 255);
+            color: rgb(170, 41, 13);
         }
 
         .navbar {
-            background-color: rgb(214, 214, 214);
+            background-image: radial-gradient(circle ,rgb(38, 54, 70) -10%, #2c3e50 100%);
             position: fixed;
             top: 0;
             width: 100%;
@@ -283,6 +296,13 @@ if ($selected_gyarto > 0) {
             pointer-events: none;
         }
 
+
+        .markacim{
+            font-weight: 999;
+            font-size: 80px;
+        }
+
+
         .search-container {
             padding: 0 20px 20px;
             display: flex;
@@ -377,13 +397,16 @@ if ($selected_gyarto > 0) {
         
         .kategoria-cim {
             margin: 20px 0;
-            color: #2c3e50;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
+            color: #2c3e50;            
         }
         
         .kategoria-cim span {
-            color: #3498db;
+            font-size: 30px;
+            -webkit-text-fill-color: #291414; 
+            -webkit-text-stroke-width: 0.37px;     
+            -webkit-text-stroke-color: white;
         }
         
         .badge-alkalmassag {
@@ -471,13 +494,13 @@ if ($selected_gyarto > 0) {
     
     <div class="main">
         <div id="cim">
-            <p><?php echo $selected_gyarto > 0 ? htmlspecialchars($gyarto_nev) : 'VÁLASSZ MÁRKÁT'; ?></p>
+            <p class="markacim"><?php echo $selected_gyarto > 0 ? htmlspecialchars($gyarto_nev) : 'VÁLASSZ MÁRKÁT'; ?></p>
         </div>
         
         <?php if ($selected_gyarto > 0 && $selected_kategoria > 0): ?>
             <div class="kategoria-cim">
                 <i class="bi bi-funnel-fill me-2"></i>
-                Kiválasztott kategória: <span><?php 
+                Kiválasztott kategória: <span class="spanom"><?php 
                     $kategoriak_result->data_seek(0);
                     while($kat = $kategoriak_result->fetch_assoc()) {
                         if ($kat['id'] == $selected_kategoria) {
