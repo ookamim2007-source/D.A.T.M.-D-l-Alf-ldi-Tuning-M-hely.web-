@@ -79,22 +79,11 @@ if ($selected_gyarto > 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>D.A.T.M. Tuning műhely - Alkatrészek</title>
     <style>
-
-        @font-face {
-            font-family: "Blippo";
-            src: url("https://db.onlinewebfonts.com/t/1e19a0b3f53570e0d33e8ec3d346f071.eot");
-            src: url("https://db.onlinewebfonts.com/t/1e19a0b3f53570e0d33e8ec3d346f071.eot?#iefix") format("embedded-opentype"),
-                url("https://db.onlinewebfonts.com/t/1e19a0b3f53570e0d33e8ec3d346f071.woff2") format("woff2"),
-                url("https://db.onlinewebfonts.com/t/1e19a0b3f53570e0d33e8ec3d346f071.woff") format("woff"),
-                url("https://db.onlinewebfonts.com/t/1e19a0b3f53570e0d33e8ec3d346f071.ttf") format("truetype"),
-                url("https://db.onlinewebfonts.com/t/1e19a0b3f53570e0d33e8ec3d346f071.svg#BlippoBlaOutP") format("svg");
-            font-weight: normal;
-            font-style: normal;
-        }
 
         * {
             box-sizing: border-box;
@@ -105,7 +94,7 @@ if ($selected_gyarto > 0) {
         body {
             overflow-x: hidden;
             background-color: #f5f5f5;
-            font-family: "Blippo", fantasy;
+            font-family: "Audiowide", sans-serif;
         }
         
         .focim {
@@ -196,18 +185,22 @@ if ($selected_gyarto > 0) {
             background-color: #7E354D; 
             background-image: radial-gradient(circle, #B32134 0%, #7C0A02 100%);
             box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
-            font-size: 18px;
+            font-size: 20px;
+            letter-spacing: 1px;
+            font-weight:590;
         }
         
         .kartya-adat {
             width: 100%;
             text-align: left;
             margin-top: 10px;
+            letter-spacing: 3px;
         }
         
         .kartya-adat p {
             margin: 5px 0;
             font-size: 14px;
+            letter-spacing: 1px;
             border-bottom: 1px solid rgba(255,255,255,0.2);
             padding-bottom: 5px;
         }
@@ -262,44 +255,26 @@ if ($selected_gyarto > 0) {
             letter-spacing: 2px;
             font-weight: bolder;
         }
-        /*
+        
+
+        
         .main {
             margin-left: 250px;
             padding: 20px 30px;
-            background-image: url("../Kepek/honda.jpg");
+            background-image: url("../Kepek/jokjep.jpg");
             background-attachment: fixed;
             background-position-x: right;
             background-color: #af1106;
             background-repeat: no-repeat;
         }
-        */
-        .main {
-            margin-left: 250px;
-            padding: 20px 30px;
-            padding-top: 10px;
-            
-            background: 
-                url('../Kepek/honda.jpg') no-repeat right center / contain, 
-                linear-gradient(135deg, #BA0C01 0%, #2E0B09 100%);
     
-                /* Az illesztés elmosása, hogy ne legyen éles vonal a kép széle és az átmenet között */
-                position: relative;
-                background-size: contain, cover;
-        }
-        .main::before{
-            content: '';
-            position: absolute;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to right, rgba(186, 12, 1, 0) 60%, rgba(46, 11, 9, 0.1) 100%);
-            pointer-events: none;
-        }
 
 
         .markacim{
             font-weight: 999;
             font-size: 80px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 
+                         0 0 20px rgba(255, 255, 255, 0.5);
         }
 
 
@@ -405,7 +380,7 @@ if ($selected_gyarto > 0) {
         .kategoria-cim span {
             font-size: 30px;
             -webkit-text-fill-color: #291414; 
-            -webkit-text-stroke-width: 0.37px;     
+            -webkit-text-stroke-width: 0.02px;     
             -webkit-text-stroke-color: white;
         }
         
