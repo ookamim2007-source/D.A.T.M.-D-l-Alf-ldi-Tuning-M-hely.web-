@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Adatbázis kapcsolat
+
 $user = 'root';
 $password = '';
 $database = 'turbo_adatbazis';
@@ -13,21 +13,33 @@ if ($mysqli->connect_error) {
     die('Connect Error (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);
 }
 
-// Gyártók lekérése
+
 $gyartok_sql = "SELECT id, nev FROM autogyartok ORDER BY nev";
 $gyartok_result = $mysqli->query($gyartok_sql);
 
-// Kategóriák lekérése
 $kategoriak_sql = "SELECT id, kat_nev, leiras FROM kategoriak ORDER BY kat_nev";
 $kategoriak_result = $mysqli->query($kategoriak_sql);
 
-// Kiválasztott gyártó és kategória kezelése
+
 $selected_gyarto = isset($_GET['gyarto']) ? (int)$_GET['gyarto'] : 0;
 $selected_kategoria = isset($_GET['kategoria']) ? (int)$_GET['kategoria'] : 0;
 
-// Alkartészek lekérése a kiválasztott gyártóhoz és kategóriához
+
+$kategoria_nev = '';
+if ($selected_kategoria > 0) {
+    $kat_sql = "SELECT kat_nev FROM kategoriak WHERE id = ?";
+    $stmt = $mysqli->prepare($kat_sql);
+    $stmt->bind_param("i", $selected_kategoria);
+    $stmt->execute();
+    $kat_result = $stmt->get_result();
+    if ($kat_row = $kat_result->fetch_assoc()) {
+        $kategoria_nev = $kat_row['kat_nev'];
+    }
+    $stmt->close();
+}
+
 $alkatreszek = [];
-if ($selected_gyarto > 0 && $selected_kategoria > 0) {
+if ($selected_gyarto > 0 && $selected_kategoria > 0 && !empty($kategoria_nev)) {
     $alkatresz_sql = "SELECT 
                         m.motor_kod,
                         m.loero,
@@ -44,12 +56,13 @@ if ($selected_gyarto > 0 && $selected_kategoria > 0) {
                       JOIN turbok t ON mtk.turbo_id = t.id
                       JOIN turbo_gyartok tg ON t.turbo_gyarto_id = tg.id
                       WHERE ag.id = ? 
-                      AND mtk.alkalmassag = (SELECT kat_nev FROM kategoriak WHERE id = ?)
-                      LIMIT 9"; // max 9 találat a 3x3-as rács miatt
+                      AND mtk.alkalmassag = ?
+                      ORDER BY m.motor_kod
+                      LIMIT 9"; 
     
     $stmt = $mysqli->prepare($alkatresz_sql);
     if ($stmt) {
-        $stmt->bind_param("ii", $selected_gyarto, $selected_kategoria);
+        $stmt->bind_param("is", $selected_gyarto, $kategoria_nev);
         $stmt->execute();
         $alkatreszek_result = $stmt->get_result();
         $alkatreszek = $alkatreszek_result->fetch_all(MYSQLI_ASSOC);
@@ -69,6 +82,14 @@ if ($selected_gyarto > 0) {
     }
     $stmt->close();
 }
+
+$kategoria_nevek = [];
+if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
+    $kategoriak_result->data_seek(0);
+    while ($kat = $kategoriak_result->fetch_assoc()) {
+        $kategoria_nevek[$kat['id']] = $kat['kat_nev'];
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -76,7 +97,6 @@ if ($selected_gyarto > 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>D.A.T.M. Tuning műhely - Alkatrészek</title>
@@ -91,7 +111,7 @@ if ($selected_gyarto > 0) {
         body {
             overflow-x: hidden;
             background-color: #f5f5f5;
-            font-family: "Audiowide", sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         ::-webkit-scrollbar {
@@ -398,9 +418,8 @@ if ($selected_gyarto > 0) {
         
         .kategoria-cim span {
             font-size: 30px;
-            -webkit-text-fill-color: #291414; 
-            -webkit-text-stroke-width: 0.02px;     
-            -webkit-text-stroke-color: white;
+            color: #291414;
+            text-shadow: 1px 1px 1px white; 
         }
         
         .badge-alkalmassag {
@@ -451,28 +470,28 @@ if ($selected_gyarto > 0) {
         <h3><i class="bi bi-grid me-2"></i>Márkák</h3>
         
         <?php
+        if ($gyartok_result) $gyartok_result->data_seek(0);
+        
         if ($gyartok_result && $gyartok_result->num_rows > 0) {
             while($gyarto = $gyartok_result->fetch_assoc()) {
                 $is_active = ($selected_gyarto == $gyarto['id']);
-                $has_submenu = $is_active; // Csak a kiválasztott gyártónál nyitjuk ki
                 ?>
                 <div class="gyarto-menu">
-                    <div class="gyarto-fejlec <?php echo $is_active ? 'active' : ''; ?> <?php echo $has_submenu ? 'open' : ''; ?>" 
+                    <div class="gyarto-fejlec <?php echo $is_active ? 'active' : ''; ?> <?php echo $is_active ? 'open' : ''; ?>" 
                          onclick="toggleGyarto(<?php echo $gyarto['id']; ?>)">
                         <span><i class="bi bi-tag me-2"></i><?php echo htmlspecialchars($gyarto['nev']); ?></span>
                         <i class="bi bi-chevron-right"></i>
                     </div>
                     <div class="kategoria-lista <?php echo $is_active ? 'show' : ''; ?>" id="kategoria-<?php echo $gyarto['id']; ?>">
                         <?php
-                        // Kategóriák listázása ehhez a gyártóhoz
-                        $kategoriak_result->data_seek(0); // Visszaállítjuk a pointert
-                        if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
-                            while($kategoria = $kategoriak_result->fetch_assoc()) {
-                                $is_kategoria_active = ($selected_kategoria == $kategoria['id'] && $is_active);
+            
+                        if (!empty($kategoria_nevek)) {
+                            foreach ($kategoria_nevek as $kat_id => $kat_nev) {
+                                $is_kategoria_active = ($selected_kategoria == $kat_id && $is_active);
                                 ?>
-                                <a href="?gyarto=<?php echo $gyarto['id']; ?>&kategoria=<?php echo $kategoria['id']; ?>" 
+                                <a href="?gyarto=<?php echo $gyarto['id']; ?>&kategoria=<?php echo $kat_id; ?>" 
                                    class="<?php echo $is_kategoria_active ? 'active' : ''; ?>">
-                                    <i class="bi bi-dot me-2"></i><?php echo htmlspecialchars($kategoria['kat_nev']); ?>
+                                    <i class="bi bi-dot me-2"></i><?php echo htmlspecialchars($kat_nev); ?>
                                 </a>
                                 <?php
                             }
@@ -491,48 +510,42 @@ if ($selected_gyarto > 0) {
             <p class="markacim"><?php echo $selected_gyarto > 0 ? htmlspecialchars($gyarto_nev) : 'VÁLASSZ MÁRKÁT'; ?></p>
         </div>
         
-        <?php if ($selected_gyarto > 0 && $selected_kategoria > 0): ?>
+        <?php if ($selected_gyarto > 0 && $selected_kategoria > 0 && !empty($kategoria_nev)): ?>
             <div class="kategoria-cim">
                 <i class="bi bi-funnel-fill me-2"></i>
-                Kiválasztott kategória: <span class="spanom"><?php 
-                    $kategoriak_result->data_seek(0);
-                    while($kat = $kategoriak_result->fetch_assoc()) {
-                        if ($kat['id'] == $selected_kategoria) {
-                            echo htmlspecialchars($kat['kat_nev']);
-                            break;
-                        }
-                    }
-                ?></span>
+                Kiválasztott kategória: <span class="spanom"><?php echo htmlspecialchars($kategoria_nev); ?></span>
             </div>
         <?php endif; ?>
         
         <div class="text-center">
     <div class="row Ksor justify-content-md-center">
         <?php 
-        if ($selected_gyarto > 0 && $selected_kategoria > 0 && !empty($alkatreszek)) {
+        if ($selected_gyarto > 0 && $selected_kategoria > 0 && !empty($kategoria_nev) && !empty($alkatreszek)) {
             foreach ($alkatreszek as $alkatresz) {
-                $item_id = base64_encode($alkatresz['motor_kod'] . $alkatresz['turbo_modell']);
+            
+                $item_id = base64_encode($alkatresz['motor_kod'] . $alkatresz['turbo_modell'] . $alkatresz['alkalmassag']);
                 ?>
                 <div class="col-md-4">
                     <div class="kartya">
                         <i class="bi bi-turbo kartya-ikon"></i>
                         <h4><?php echo htmlspecialchars($alkatresz['motor_kod']); ?></h4>
                         <div class="kartya-adat">
-                            <p><i class="bi bi-speedometer2 me-2"></i>Teljesítmény: <?php echo $alkatresz['loero']; ?> LE</p>
-                            <p><i class="bi bi-cpu me-2"></i>Hengerűrtartalom: <?php echo $alkatresz['hengerurtartalom']; ?> L</p>
+                            <p><i class="bi bi-speedometer2 me-2"></i>Teljesítmény: <?php echo htmlspecialchars($alkatresz['loero']); ?> LE</p>
+                            <p><i class="bi bi-cpu me-2"></i>Hengerűrtartalom: <?php echo htmlspecialchars($alkatresz['hengerurtartalom']); ?> L</p>
                             <p><i class="bi bi-turbine me-2"></i>Turbó: <?php echo htmlspecialchars($alkatresz['turbo_gyarto'] . ' ' . $alkatresz['turbo_modell']); ?></p>
-                            <p><i class="bi bi-graph-up me-2"></i>Tuning: <?php echo $alkatresz['teljesitmeny_tartomany_from']; ?>-<?php echo $alkatresz['teljesitmeny_tartomany_to']; ?> LE</p>
+                            <p><i class="bi bi-graph-up me-2"></i>Tuning: <?php echo htmlspecialchars($alkatresz['teljesitmeny_tartomany_from'] . '-' . $alkatresz['teljesitmeny_tartomany_to']); ?> LE</p>
                             
                             <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="badge-alkalmassag badge-<?php echo $alkatresz['alkalmassag']; ?>">
-                                    <?php echo $alkatresz['alkalmassag']; ?>
+                                <span class="badge-alkalmassag badge-<?php echo htmlspecialchars($alkatresz['alkalmassag']); ?>">
+                                    <?php echo htmlspecialchars($alkatresz['alkalmassag']); ?>
                                 </span>
                                 
                                 <form method="POST" action="kosar.php">
                                     <input type="hidden" name="item_id" value="<?php echo $item_id; ?>">
                                     <input type="hidden" name="motor_kod" value="<?php echo htmlspecialchars($alkatresz['motor_kod']); ?>">
-                                    <input type="hidden" name="loero" value="<?php echo $alkatresz['loero']; ?>">
+                                    <input type="hidden" name="loero" value="<?php echo htmlspecialchars($alkatresz['loero']); ?>">
                                     <input type="hidden" name="turbo" value="<?php echo htmlspecialchars($alkatresz['turbo_gyarto'] . ' ' . $alkatresz['turbo_modell']); ?>">
+                                    <input type="hidden" name="alkalmassag" value="<?php echo htmlspecialchars($alkatresz['alkalmassag']); ?>">
                                     <button type="submit" name="add_to_cart" class="btn btn-light btn-sm rounded-pill px-3 fw-bold">
                                         <i class="bi bi-cart-plus-fill"></i>
                                     </button>
@@ -552,6 +565,19 @@ if ($selected_gyarto > 0) {
                         <i class="bi bi-plus-circle kartya-ikon"></i>
                         <p>Nincs több találat</p>
                         <small>Válassz másik kategóriát</small>
+                    </div>
+                </div>
+                <?php
+            }
+        } else if ($selected_gyarto > 0 && $selected_kategoria > 0 && empty($alkatreszek)) {
+            
+            for ($i = 0; $i < 9; $i++) {
+                ?>
+                <div class="col-md-4">
+                    <div class="kartya kartya-ures">
+                        <i class="bi bi-search kartya-ikon"></i>
+                        <p>Nincs találat</p>
+                        <small>Ehhez a kategóriához nincs elérhető alkatrész</small>
                     </div>
                 </div>
                 <?php
