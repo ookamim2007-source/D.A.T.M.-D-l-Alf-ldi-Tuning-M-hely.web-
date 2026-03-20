@@ -28,8 +28,6 @@ $selected_kategoria = isset($_GET['kategoria']) ? (int)$_GET['kategoria'] : 0;
 // Alkartészek lekérése a kiválasztott gyártóhoz és kategóriához
 $alkatreszek = [];
 if ($selected_gyarto > 0 && $selected_kategoria > 0) {
-    // Itt lehet összetett lekérdezés a motorokhoz és turbókhoz
-    // Most egy egyszerű példa lekérdezés
     $alkatresz_sql = "SELECT 
                         m.motor_kod,
                         m.loero,
@@ -59,7 +57,6 @@ if ($selected_gyarto > 0 && $selected_kategoria > 0) {
     }
 }
 
-// Gyártó nevének lekérése a címsorhoz
 $gyarto_nev = '';
 if ($selected_gyarto > 0) {
     $gyarto_sql = "SELECT nev FROM autogyartok WHERE id = ?";
@@ -96,6 +93,24 @@ if ($selected_gyarto > 0) {
             background-color: #f5f5f5;
             font-family: "Audiowide", sans-serif;
         }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #2c3e50;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #f11e3a;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #be1229;
+        }
+
         
         .focim {
             margin-left: 3%;
@@ -129,6 +144,7 @@ if ($selected_gyarto > 0) {
         }
 
         .ikkon:hover {
+            transition: 0.2s;
             color: rgb(170, 41, 13);
         }
 
@@ -188,6 +204,7 @@ if ($selected_gyarto > 0) {
             font-size: 20px;
             letter-spacing: 1px;
             font-weight:590;
+            text-shadow: 1px 1px 10px black;
         }
         
         .kartya-adat {
@@ -195,6 +212,7 @@ if ($selected_gyarto > 0) {
             text-align: left;
             margin-top: 10px;
             letter-spacing: 3px;
+            text-shadow: 1px 1px 10px black;
         }
         
         .kartya-adat p {
@@ -203,6 +221,7 @@ if ($selected_gyarto > 0) {
             letter-spacing: 1px;
             border-bottom: 1px solid rgba(255,255,255,0.2);
             padding-bottom: 5px;
+            text-shadow: 1px 1px 10px black;
         }
         
         .Ksor {
@@ -261,7 +280,7 @@ if ($selected_gyarto > 0) {
         .main {
             margin-left: 250px;
             padding: 20px 30px;
-            background-image: url("../Kepek/jokjep.jpg");
+            background-image: url("../Kepek/jokjep.png");
             background-attachment: fixed;
             background-position-x: right;
             background-color: #af1106;
@@ -407,10 +426,10 @@ if ($selected_gyarto > 0) {
                 <a href="?">D.A.T.M. Tuning műhely</a>
             </div>
             <div class="col-3 ikonok d-flex">
-                <a href="#">
+                <a href="">
                     <i class="bi bi-moon-stars ikkon"></i>
                 </a>
-                <a href="#">
+                <a href="kosar.php">
                     <i class="bi bi-cart3 ikkon"></i>
                 </a>
                 <a href="#">
@@ -488,78 +507,87 @@ if ($selected_gyarto > 0) {
         <?php endif; ?>
         
         <div class="text-center">
-            <div class="row Ksor justify-content-md-center">
-                <?php 
-                if ($selected_gyarto > 0 && $selected_kategoria > 0 && !empty($alkatreszek)) {
-                    // Megjelenítjük a találatokat
-                    foreach ($alkatreszek as $alkatresz) {
-                        ?>
-                        <div class="col-md-4">
-                            <div class="kartya">
-                                <i class="bi bi-turbo kartya-ikon"></i>
-                                <h4><?php echo htmlspecialchars($alkatresz['motor_kod']); ?></h4>
-                                <div class="kartya-adat">
-                                    <p><i class="bi bi-speedometer2 me-2"></i>Teljesítmény: <?php echo $alkatresz['loero']; ?> LE</p>
-                                    <p><i class="bi bi-cpu me-2"></i>Hengerűrtartalom: <?php echo $alkatresz['hengerurtartalom']; ?> L</p>
-                                    <p><i class="bi bi-turbine me-2"></i>Turbó: <?php echo htmlspecialchars($alkatresz['turbo_gyarto'] . ' ' . $alkatresz['turbo_modell']); ?></p>
-                                    <p><i class="bi bi-graph-up me-2"></i>Tuning: <?php echo $alkatresz['teljesitmeny_tartomany_from']; ?>-<?php echo $alkatresz['teljesitmeny_tartomany_to']; ?> LE</p>
-                                    <span class="badge-alkalmassag badge-<?php echo $alkatresz['alkalmassag']; ?>">
-                                        <?php echo $alkatresz['alkalmassag']; ?>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                    
-                    // Ha kevesebb mint 9 találat van, a többit üresen hagyjuk
-                    $talalatok_szama = count($alkatreszek);
-                    for ($i = $talalatok_szama; $i < 9; $i++) {
-                        ?>
-                        <div class="col-md-4">
-                            <div class="kartya kartya-ures">
-                                <i class="bi bi-plus-circle kartya-ikon"></i>
-                                <p>Nincs több találat</p>
-                                <small>Válassz másik kategóriát</small>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                } else {
-                    // Alapértelmezett üres kártyák
-                    for ($i = 0; $i < 9; $i++) {
-                        ?>
-                        <div class="col-md-4">
-                            <div class="kartya kartya-ures">
-                                <i class="bi bi-box-seam kartya-ikon"></i>
-                                <p>Üres</p>
-                                <small>Válassz egy márkát és kategóriát</small>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                }
+    <div class="row Ksor justify-content-md-center">
+        <?php 
+        if ($selected_gyarto > 0 && $selected_kategoria > 0 && !empty($alkatreszek)) {
+            foreach ($alkatreszek as $alkatresz) {
+                $item_id = base64_encode($alkatresz['motor_kod'] . $alkatresz['turbo_modell']);
                 ?>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function toggleGyarto(gyartoId) {
-            // Átirányítás a gyártó kiválasztásához
-            window.location.href = '?gyarto=' + gyartoId;
-        }
-        
-        // Ha van kiválasztott gyártó, görgessünk hozzá
-        window.onload = function() {
-            <?php if ($selected_gyarto > 0): ?>
-            const activeElement = document.querySelector('.gyarto-fejlec.active');
-            if (activeElement) {
-                activeElement.scrollIntoView({behavior: 'smooth', block: 'center'});
+                <div class="col-md-4">
+                    <div class="kartya">
+                        <i class="bi bi-turbo kartya-ikon"></i>
+                        <h4><?php echo htmlspecialchars($alkatresz['motor_kod']); ?></h4>
+                        <div class="kartya-adat">
+                            <p><i class="bi bi-speedometer2 me-2"></i>Teljesítmény: <?php echo $alkatresz['loero']; ?> LE</p>
+                            <p><i class="bi bi-cpu me-2"></i>Hengerűrtartalom: <?php echo $alkatresz['hengerurtartalom']; ?> L</p>
+                            <p><i class="bi bi-turbine me-2"></i>Turbó: <?php echo htmlspecialchars($alkatresz['turbo_gyarto'] . ' ' . $alkatresz['turbo_modell']); ?></p>
+                            <p><i class="bi bi-graph-up me-2"></i>Tuning: <?php echo $alkatresz['teljesitmeny_tartomany_from']; ?>-<?php echo $alkatresz['teljesitmeny_tartomany_to']; ?> LE</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="badge-alkalmassag badge-<?php echo $alkatresz['alkalmassag']; ?>">
+                                    <?php echo $alkatresz['alkalmassag']; ?>
+                                </span>
+                                
+                                <form method="POST" action="kosar.php">
+                                    <input type="hidden" name="item_id" value="<?php echo $item_id; ?>">
+                                    <input type="hidden" name="motor_kod" value="<?php echo htmlspecialchars($alkatresz['motor_kod']); ?>">
+                                    <input type="hidden" name="loero" value="<?php echo $alkatresz['loero']; ?>">
+                                    <input type="hidden" name="turbo" value="<?php echo htmlspecialchars($alkatresz['turbo_gyarto'] . ' ' . $alkatresz['turbo_modell']); ?>">
+                                    <button type="submit" name="add_to_cart" class="btn btn-light btn-sm rounded-pill px-3 fw-bold">
+                                        <i class="bi bi-cart-plus-fill"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php
             }
-            <?php endif; ?>
-        };
-    </script>
+            
+            $talalatok_szama = count($alkatreszek);
+            for ($i = $talalatok_szama; $i < 9; $i++) {
+                ?>
+                <div class="col-md-4">
+                    <div class="kartya kartya-ures">
+                        <i class="bi bi-plus-circle kartya-ikon"></i>
+                        <p>Nincs több találat</p>
+                        <small>Válassz másik kategóriát</small>
+                    </div>
+                </div>
+                <?php
+            }
+        } else {
+            for ($i = 0; $i < 9; $i++) {
+                ?>
+                <div class="col-md-4">
+                    <div class="kartya kartya-ures">
+                        <i class="bi bi-box-seam kartya-ikon"></i>
+                        <p>Üres</p>
+                        <small>Válassz egy márkát és kategóriát</small>
+                    </div>
+                </div>
+                <?php
+            }
+        }
+        ?>
+    </div>
+</div>
+</div>
+
+<script>
+    function toggleGyarto(gyartoId) {
+        window.location.href = '?gyarto=' + gyartoId;
+    }
+    
+    window.onload = function() {
+        <?php if ($selected_gyarto > 0): ?>
+        const activeElement = document.querySelector('.gyarto-fejlec.active');
+        if (activeElement) {
+            activeElement.scrollIntoView({behavior: 'smooth', block: 'center'});
+        }
+        <?php endif; ?>
+    };
+</script>
 </body>
 </html>
 
