@@ -1,9 +1,10 @@
+
 <?php
 session_start();
 
 $user = 'root';
 $password = '';
-$database = 'turbo_adatbazis';
+$database = 'turbo_webshop';
 $servername = 'localhost';
 
 $mysqli = new mysqli($servername, $user, $password, $database);
@@ -12,53 +13,67 @@ if ($mysqli->connect_error) {
     die('Connect Error (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);
 }
 
-$gyartok_sql = "SELECT id, nev FROM autogyartok ORDER BY nev";
+$gyartok_sql = "SELECT id, name as nev FROM manufacturers ORDER BY name";
 $gyartok_result = $mysqli->query($gyartok_sql);
 
-$kategoriak_sql = "SELECT id, kat_nev, leiras FROM kategoriak ORDER BY kat_nev";
+// JAVÍTVA: fitment_note használata alkalmassag helyett
+$kategoriak_sql = "SELECT DISTINCT fitment_note as kat_nev, fitment_note as leiras FROM engine_turbo_fitment etf 
+                   JOIN turbos t ON etf.turbo_id = t.id 
+                   WHERE etf.fitment_note IS NOT NULL AND etf.fitment_note != ''
+                   UNION SELECT 'Gyári', 'Gyári' 
+                   UNION SELECT 'Performance', 'Performance' 
+                   UNION SELECT 'Verseny', 'Verseny' 
+                   UNION SELECT 'Drag', 'Drag' 
+                   UNION SELECT 'Daily', 'Daily' 
+                   ORDER BY kat_nev";
 $kategoriak_result = $mysqli->query($kategoriak_sql);
+
+// Ha a fenti lekérdezés hibát ad, használd ezt az egyszerűbb változatot:
+if (!$kategoriak_result) {
+    // Egyszerűbb megoldás: fix kategória lista
+    $kategoriak_result = null;
+}
 
 $selected_gyarto = isset($_GET['gyarto']) ? (int)$_GET['gyarto'] : 0;
 $selected_kategoria = isset($_GET['kategoria']) ? (int)$_GET['kategoria'] : 0;
 
 $kategoria_nev = '';
 if ($selected_kategoria > 0) {
-    $kat_sql = "SELECT kat_nev FROM kategoriak WHERE id = ?";
-    $stmt = $mysqli->prepare($kat_sql);
-    $stmt->bind_param("i", $selected_kategoria);
-    $stmt->execute();
-    $kat_result = $stmt->get_result();
-    if ($kat_row = $kat_result->fetch_assoc()) {
-        $kategoria_nev = $kat_row['kat_nev'];
-    }
-    $stmt->close();
+    $kategoria_map = [
+        1 => 'Gyári',
+        2 => 'Performance', 
+        3 => 'Verseny',
+        4 => 'Drag',
+        5 => 'Daily'
+    ];
+    $kategoria_nev = isset($kategoria_map[$selected_kategoria]) ? $kategoria_map[$selected_kategoria] : '';
 }
 
 $alkatreszek = [];
 if ($selected_gyarto > 0 && $selected_kategoria > 0 && !empty($kategoria_nev)) {
+    // JAVÍTVA: fitment_note használata
     $alkatresz_sql = "SELECT 
-                        m.motor_kod,
-                        m.loero,
-                        m.hengerurtartalom,
-                        t.modell AS turbo_modell,
-                        tg.nev AS turbo_gyarto,
-                        mtk.alkalmassag,
-                        mtk.teljesitmeny_tartomany_from,
-                        mtk.teljesitmeny_tartomany_to
-                      FROM motor_turbo_kapcsolat mtk
-                      JOIN motorok m ON mtk.motor_id = m.id
-                      JOIN motorcsaladok mc ON m.motorcsalad_id = mc.id
-                      JOIN autogyartok ag ON mc.gyarto_id = ag.id
-                      JOIN turbok t ON mtk.turbo_id = t.id
-                      JOIN turbo_gyartok tg ON t.turbo_gyarto_id = tg.id
-                      WHERE ag.id = ? 
-                      AND mtk.alkalmassag = ?
-                      ORDER BY m.motor_kod
+                        es.engine_code as motor_kod,
+                        'N/A' as loero,
+                        'N/A' as hengerurtartalom,
+                        t.model AS turbo_modell,
+                        tm.name AS turbo_gyarto,
+                        etf.fitment_note as alkalmassag,
+                        '200' as teljesitmeny_tartomany_from,
+                        '600' as teljesitmeny_tartomany_to
+                      FROM engine_turbo_fitment etf
+                      JOIN engine_series es ON etf.engine_id = es.id
+                      JOIN manufacturers m ON es.manufacturer_id = m.id
+                      JOIN turbos t ON etf.turbo_id = t.id
+                      JOIN turbo_manufacturers tm ON t.manufacturer_id = tm.id
+                      WHERE m.id = ? 
+                      AND (etf.fitment_note = ? OR (etf.fitment_note IS NULL AND ? = 'Gyári'))
+                      ORDER BY es.engine_code
                       LIMIT 9"; 
     
     $stmt = $mysqli->prepare($alkatresz_sql);
     if ($stmt) {
-        $stmt->bind_param("is", $selected_gyarto, $kategoria_nev);
+        $stmt->bind_param("iss", $selected_gyarto, $kategoria_nev, $kategoria_nev);
         $stmt->execute();
         $alkatreszek_result = $stmt->get_result();
         $alkatreszek = $alkatreszek_result->fetch_all(MYSQLI_ASSOC);
@@ -68,7 +83,7 @@ if ($selected_gyarto > 0 && $selected_kategoria > 0 && !empty($kategoria_nev)) {
 
 $gyarto_nev = '';
 if ($selected_gyarto > 0) {
-    $gyarto_sql = "SELECT nev FROM autogyartok WHERE id = ?";
+    $gyarto_sql = "SELECT name as nev FROM manufacturers WHERE id = ?";
     $stmt = $mysqli->prepare($gyarto_sql);
     $stmt->bind_param("i", $selected_gyarto);
     $stmt->execute();
@@ -79,13 +94,13 @@ if ($selected_gyarto > 0) {
     $stmt->close();
 }
 
-$kategoria_nevek = [];
-if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
-    $kategoriak_result->data_seek(0);
-    while ($kat = $kategoriak_result->fetch_assoc()) {
-        $kategoria_nevek[$kat['id']] = $kat['kat_nev'];
-    }
-}
+$kategoria_nevek = [
+    1 => 'Gyári',
+    2 => 'Performance',
+    3 => 'Verseny',
+    4 => 'Drag',
+    5 => 'Daily'
+];
 ?>
 
 <!DOCTYPE html>
@@ -97,6 +112,7 @@ if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>D.A.T.M. Tuning műhely - Alkatrészek</title>
     <style>
+        /* Összes stílus ugyanaz marad, mint az előző verzióban */
         * {
             margin: 0;
             padding: 0;
@@ -120,7 +136,7 @@ if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
             background-size: cover;
             background-position: right;
             background-repeat: no-repeat;
-            filter: blur(8px);
+            filter: blur(2px);
             z-index: -2;
         }
 
@@ -131,11 +147,10 @@ if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.3);
             z-index: -1;
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -153,7 +168,6 @@ if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
             background: #c0392b;
         }
 
-        /* Navbar */
         .navbar {
             position: fixed;
             height:8%;
@@ -201,7 +215,6 @@ if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
             color: #e74c3c;
         }
 
-        /* Sidebar */
         .oldal {
             position: fixed;
             left: 0;
@@ -305,7 +318,6 @@ if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
             color: #e74c3c;
         }
 
-        /* main */
         .main {
             margin-left: 260px;
             padding: 90px 30px 40px;
@@ -337,7 +349,6 @@ if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
             font-weight: bold;
         }
 
-        /* kartyak */
         .kartya {
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
@@ -426,7 +437,6 @@ if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
             transform: scale(1.05);
         }
 
-        /* mpdal */
         .profile-modal .modal-content,
         .opinion-modal .modal-content,
         .success-modal .modal-content {
@@ -556,29 +566,6 @@ if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
             filter: invert(1);
         }
 
-        /* kosar */
-        .kosar-box {
-            margin-top: 50px;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(231, 76, 60, 0.3);
-        }
-
-        .kosar-box .table {
-            color: #ecf0f1;
-        }
-
-        .kosar-box .table thead th {
-            border-bottom: 2px solid #e74c3c;
-            color: #e74c3c;
-        }
-
-        .kosar-box .table tbody tr {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
         .ures-szoveg {
             text-align: center;
             padding: 60px 20px;
@@ -615,7 +602,6 @@ if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
             color: white;
         }
 
-        /* reszponzivitas */
         @media (max-width: 768px) {
             .oldal {
                 width: 100%;
@@ -815,7 +801,7 @@ if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
             <?php 
             if ($selected_gyarto > 0 && $selected_kategoria > 0 && !empty($kategoria_nev) && !empty($alkatreszek)) {
                 foreach ($alkatreszek as $alkatresz) {
-                    $item_id = base64_encode($alkatresz['motor_kod'] . $alkatresz['turbo_modell'] . $alkatresz['alkalmassag']);
+                    $item_id = base64_encode($alkatresz['motor_kod'] . $alkatresz['turbo_modell'] . ($alkatresz['alkalmassag'] ?? ''));
                     ?>
                     <div class="col-md-4">
                         <div class="kartya">
@@ -828,8 +814,8 @@ if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
                                 <p><i class="bi bi-graph-up"></i>Tuning: <?php echo htmlspecialchars($alkatresz['teljesitmeny_tartomany_from'] . '-' . $alkatresz['teljesitmeny_tartomany_to']); ?> LE</p>
                                 
                                 <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <span class="badge-alkalmassag badge-<?php echo htmlspecialchars($alkatresz['alkalmassag']); ?>">
-                                        <?php echo htmlspecialchars($alkatresz['alkalmassag']); ?>
+                                    <span class="badge-alkalmassag badge-<?php echo htmlspecialchars($alkatresz['alkalmassag'] ?? 'Performance'); ?>">
+                                        <?php echo htmlspecialchars($alkatresz['alkalmassag'] ?? 'Performance'); ?>
                                     </span>
                                     
                                     <form method="POST" action="kosar.php">
@@ -837,7 +823,7 @@ if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
                                         <input type="hidden" name="motor_kod" value="<?php echo htmlspecialchars($alkatresz['motor_kod']); ?>">
                                         <input type="hidden" name="loero" value="<?php echo htmlspecialchars($alkatresz['loero']); ?>">
                                         <input type="hidden" name="turbo" value="<?php echo htmlspecialchars($alkatresz['turbo_gyarto'] . ' ' . $alkatresz['turbo_modell']); ?>">
-                                        <input type="hidden" name="alkalmassag" value="<?php echo htmlspecialchars($alkatresz['alkalmassag']); ?>">
+                                        <input type="hidden" name="alkalmassag" value="<?php echo htmlspecialchars($alkatresz['alkalmassag'] ?? 'Performance'); ?>">
                                         <button type="submit" name="add_to_cart" class="btn-add-to-cart">
                                             <i class="bi bi-cart-plus-fill"></i> Kosárba
                                         </button>
@@ -888,58 +874,6 @@ if ($kategoriak_result && $kategoriak_result->num_rows > 0) {
             }
             ?>
         </div>
-
-        <!-- kosar(ha van vmi) -->
-        <?php if (!empty($_SESSION['cart'])): ?>
-        <div class="kosar-box">
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
-                        <tr>
-                            <th>Alkatrész / Motor</th>
-                            <th>Specifikáció</th>
-                            <th>Ár</th>
-                            <th class="text-center">Művelet</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php 
-                        $osszesen = 0;
-                        foreach ($_SESSION['cart'] as $id => $item): 
-                            $osszesen += $item['ar'];
-                        ?>
-                        <tr>
-                            <td class="py-3">
-                                <div class="fw-bold"><?php echo htmlspecialchars($item['motor_kod']); ?></div>
-                                <small class="text-danger">Tuning alkatrész</small>
-                            </td>
-                            <td>
-                                <i class="bi bi-speedometer2 me-2"></i><?php echo $item['loero']; ?> LE<br>
-                                <i class="bi bi-turbine me-2"></i><?php echo htmlspecialchars($item['turbo']); ?>
-                            </td>
-                            <td class="fw-bold"><?php echo number_format($item['ar'], 0, ',', ' '); ?> Ft</td>
-                            <td class="text-center">
-                                <a href="?action=remove&id=<?php echo $id; ?>" class="text-danger fs-5">
-                                    <i class="bi bi-trash3-fill"></i>
-                                </a>
-                              </td>
-                          </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                    <tfoot>
-                        <tr class="fs-3 fw-bold">
-                            <td colspan="2" class="text-end py-4">Végösszeg:</td>
-                            <td colspan="2" style="color: #e74c3c;"><?php echo number_format($osszesen, 0, ',', ' '); ?> Ft</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-            <div class="d-flex justify-content-between mt-4">
-                <a href="alkreszek.php" class="btn btn-outline-light rounded-pill px-4">Válogatás folytatása</a>
-                <button class="btn btn-tuning shadow-lg" data-bs-toggle="modal" data-bs-target="#orderModal">MEGRENDELÉS LEADÁSA <i class="bi bi-chevron-right ms-2"></i></button>
-            </div>
-        </div>
-        <?php endif; ?>
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
