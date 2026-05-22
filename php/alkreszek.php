@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 
@@ -16,64 +15,34 @@ if ($mysqli->connect_error) {
 $gyartok_sql = "SELECT id, name as nev FROM manufacturers ORDER BY name";
 $gyartok_result = $mysqli->query($gyartok_sql);
 
-// JAVÍTVA: fitment_note használata alkalmassag helyett
-$kategoriak_sql = "SELECT DISTINCT fitment_note as kat_nev, fitment_note as leiras FROM engine_turbo_fitment etf 
-                   JOIN turbos t ON etf.turbo_id = t.id 
-                   WHERE etf.fitment_note IS NOT NULL AND etf.fitment_note != ''
-                   UNION SELECT 'Gyári', 'Gyári' 
-                   UNION SELECT 'Performance', 'Performance' 
-                   UNION SELECT 'Verseny', 'Verseny' 
-                   UNION SELECT 'Drag', 'Drag' 
-                   UNION SELECT 'Daily', 'Daily' 
-                   ORDER BY kat_nev";
-$kategoriak_result = $mysqli->query($kategoriak_sql);
-
-// Ha a fenti lekérdezés hibát ad, használd ezt az egyszerűbb változatot:
-if (!$kategoriak_result) {
-    // Egyszerűbb megoldás: fix kategória lista
-    $kategoriak_result = null;
-}
-
 $selected_gyarto = isset($_GET['gyarto']) ? (int)$_GET['gyarto'] : 0;
-$selected_kategoria = isset($_GET['kategoria']) ? (int)$_GET['kategoria'] : 0;
-
-$kategoria_nev = '';
-if ($selected_kategoria > 0) {
-    $kategoria_map = [
-        1 => 'Gyári',
-        2 => 'Performance', 
-        3 => 'Verseny',
-        4 => 'Drag',
-        5 => 'Daily'
-    ];
-    $kategoria_nev = isset($kategoria_map[$selected_kategoria]) ? $kategoria_map[$selected_kategoria] : '';
-}
 
 $alkatreszek = [];
-if ($selected_gyarto > 0 && $selected_kategoria > 0 && !empty($kategoria_nev)) {
-    // JAVÍTVA: fitment_note használata
+
+if ($selected_gyarto > 0) {
+
     $alkatresz_sql = "SELECT 
                         es.engine_code as motor_kod,
-                        'N/A' as loero,
-                        'N/A' as hengerurtartalom,
+                        m.name as gyarto_nev,
+                        COALESCE(tm.name, 'Ismeretlen') as turbo_gyarto,
                         t.model AS turbo_modell,
-                        tm.name AS turbo_gyarto,
-                        etf.fitment_note as alkalmassag,
-                        '200' as teljesitmeny_tartomany_from,
-                        '600' as teljesitmeny_tartomany_to
+                        CASE 
+                            WHEN etf.fitment_note IS NULL OR etf.fitment_note = '' THEN 'Gyári'
+                            ELSE etf.fitment_note 
+                        END as alkalmassag,
+                        '300-800' as teljesitmeny_tartomany
                       FROM engine_turbo_fitment etf
                       JOIN engine_series es ON etf.engine_id = es.id
                       JOIN manufacturers m ON es.manufacturer_id = m.id
                       JOIN turbos t ON etf.turbo_id = t.id
                       JOIN turbo_manufacturers tm ON t.manufacturer_id = tm.id
-                      WHERE m.id = ? 
-                      AND (etf.fitment_note = ? OR (etf.fitment_note IS NULL AND ? = 'Gyári'))
+                      WHERE m.id = ?
                       ORDER BY es.engine_code
-                      LIMIT 9"; 
-    
+                      LIMIT 12";
+
     $stmt = $mysqli->prepare($alkatresz_sql);
     if ($stmt) {
-        $stmt->bind_param("iss", $selected_gyarto, $kategoria_nev, $kategoria_nev);
+        $stmt->bind_param("i", $selected_gyarto);
         $stmt->execute();
         $alkatreszek_result = $stmt->get_result();
         $alkatreszek = $alkatreszek_result->fetch_all(MYSQLI_ASSOC);
@@ -93,18 +62,11 @@ if ($selected_gyarto > 0) {
     }
     $stmt->close();
 }
-
-$kategoria_nevek = [
-    1 => 'Gyári',
-    2 => 'Performance',
-    3 => 'Verseny',
-    4 => 'Drag',
-    5 => 'Daily'
-];
 ?>
 
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -112,7 +74,6 @@ $kategoria_nevek = [
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>D.A.T.M. Tuning műhely - Alkatrészek</title>
     <style>
-        /* Összes stílus ugyanaz marad, mint az előző verzióban */
         * {
             margin: 0;
             padding: 0;
@@ -170,7 +131,7 @@ $kategoria_nevek = [
 
         .navbar {
             position: fixed;
-            height:8%;
+            height: 8%;
             top: 0;
             width: 100%;
             z-index: 1000;
@@ -289,35 +250,6 @@ $kategoria_nevek = [
             border-left-color: #e74c3c;
         }
 
-        .kategoria-lista {
-            display: none;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 5px 0;
-        }
-
-        .kategoria-lista.show {
-            display: block;
-        }
-
-        .kategoria-lista a {
-            padding: 10px 20px 10px 40px;
-            color: #bdc3c7;
-            text-decoration: none;
-            display: block;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .kategoria-lista a:hover {
-            background: rgba(231, 76, 60, 0.2);
-            color: #e74c3c;
-        }
-
-        .kategoria-lista a.active {
-            background: rgba(231, 76, 60, 0.3);
-            color: #e74c3c;
-        }
-
         .main {
             margin-left: 260px;
             padding: 90px 30px 40px;
@@ -337,18 +269,6 @@ $kategoria_nevek = [
             letter-spacing: 4px;
         }
 
-        .kategoria-cim {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #ecf0f1;
-            font-size: 20px;
-        }
-
-        .kategoria-cim span {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-
         .kartya {
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
@@ -359,6 +279,7 @@ $kategoria_nevek = [
             margin-bottom: 25px;
             transition: all 0.3s;
             cursor: pointer;
+            height: 100%;
         }
 
         .kartya:hover {
@@ -379,6 +300,7 @@ $kategoria_nevek = [
             text-align: center;
             margin-bottom: 15px;
             color: #e74c3c;
+            font-size: 20px;
         }
 
         .kartya-adat p {
@@ -391,6 +313,7 @@ $kategoria_nevek = [
         .kartya-adat i {
             color: #e74c3c;
             margin-right: 8px;
+            width: 20px;
         }
 
         .kartya-ures {
@@ -401,6 +324,7 @@ $kategoria_nevek = [
             align-items: center;
             justify-content: center;
             min-height: 280px;
+            height: 100%;
         }
 
         .kartya-ures .kartya-ikon {
@@ -416,11 +340,20 @@ $kategoria_nevek = [
             font-weight: bold;
         }
 
-        .badge-Gyári { background: #27ae60; color: white; }
-        .badge-Performance { background: #2980b9; color: white; }
-        .badge-Verseny { background: #e74c3c; color: white; }
-        .badge-Drag { background: #8e44ad; color: white; }
-        .badge-Daily { background: #f39c12; color: white; }
+        .badge-Gyári {
+            background: #27ae60;
+            color: white;
+        }
+
+        .badge-turbo\ konverzió {
+            background: #2980b9;
+            color: white;
+        }
+
+        .badge-dízel {
+            background: #8e44ad;
+            color: white;
+        }
 
         .btn-add-to-cart {
             background: #e74c3c;
@@ -558,8 +491,15 @@ $kategoria_nevek = [
         }
 
         @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
         }
 
         .btn-close-white {
@@ -613,31 +553,32 @@ $kategoria_nevek = [
                 transition: transform 0.3s;
                 z-index: 1001;
             }
-            
+
             .oldal.open {
                 transform: translateX(0);
             }
-            
+
             .main {
                 margin-left: 0;
                 padding: 80px 15px 30px;
             }
-            
+
             .markacim {
                 font-size: 32px;
                 letter-spacing: 2px;
             }
-            
+
             .focim {
                 font-size: 20px;
             }
-            
+
             .ikonok a {
                 font-size: 18px;
             }
         }
     </style>
 </head>
+
 <body>
 
     <!-- navbar -->
@@ -749,36 +690,19 @@ $kategoria_nevek = [
             <i class="bi bi-search keresoikon"></i>
         </div>
         <h3><i class="bi bi-grid me-2"></i>Márkák</h3>
-        
+
         <?php
-        if ($gyartok_result) $gyartok_result->data_seek(0);
         if ($gyartok_result && $gyartok_result->num_rows > 0) {
-            while($gyarto = $gyartok_result->fetch_assoc()) {
+            $gyartok_result->data_seek(0);
+            while ($gyarto = $gyartok_result->fetch_assoc()) {
                 $is_active = ($selected_gyarto == $gyarto['id']);
-                ?>
-                <div class="gyarto-menu">
-                    <div class="gyarto-fejlec <?php echo $is_active ? 'active' : ''; ?>" 
-                         onclick="toggleGyarto(<?php echo $gyarto['id']; ?>)">
-                        <span><i class="bi bi-tag me-2"></i><?php echo htmlspecialchars($gyarto['nev']); ?></span>
-                        <i class="bi bi-chevron-right"></i>
-                    </div>
-                    <div class="kategoria-lista <?php echo $is_active ? 'show' : ''; ?>" id="kategoria-<?php echo $gyarto['id']; ?>">
-                        <?php
-                        if (!empty($kategoria_nevek)) {
-                            foreach ($kategoria_nevek as $kat_id => $kat_nev) {
-                                $is_kategoria_active = ($selected_kategoria == $kat_id && $is_active);
-                                ?>
-                                <a href="?gyarto=<?php echo $gyarto['id']; ?>&kategoria=<?php echo $kat_id; ?>" 
-                                   class="<?php echo $is_kategoria_active ? 'active' : ''; ?>">
-                                    <i class="bi bi-dot me-2"></i><?php echo htmlspecialchars($kat_nev); ?>
-                                </a>
-                                <?php
-                            }
-                        }
-                        ?>
-                    </div>
+        ?>
+                <div class="gyarto-fejlec <?php echo $is_active ? 'active' : ''; ?>"
+                    onclick="window.location.href='?gyarto=<?php echo $gyarto['id']; ?>'">
+                    <span><i class="bi bi-tag me-2"></i><?php echo htmlspecialchars($gyarto['nev']); ?></span>
+                    <i class="bi bi-chevron-right"></i>
                 </div>
-                <?php
+        <?php
             }
         }
         ?>
@@ -789,39 +713,40 @@ $kategoria_nevek = [
         <div id="cim">
             <p class="markacim"><?php echo $selected_gyarto > 0 ? htmlspecialchars($gyarto_nev) : 'VÁLASSZ MÁRKÁT'; ?></p>
         </div>
-        
-        <?php if ($selected_gyarto > 0 && $selected_kategoria > 0 && !empty($kategoria_nev)): ?>
-            <div class="kategoria-cim">
-                <i class="bi bi-funnel-fill me-2"></i>
-                Kiválasztott kategória: <span><?php echo htmlspecialchars($kategoria_nev); ?></span>
-            </div>
-        <?php endif; ?>
-        
+
         <div class="row g-4 justify-content-center">
-            <?php 
-            if ($selected_gyarto > 0 && $selected_kategoria > 0 && !empty($kategoria_nev) && !empty($alkatreszek)) {
+            <?php
+            if ($selected_gyarto > 0 && !empty($alkatreszek)) {
                 foreach ($alkatreszek as $alkatresz) {
                     $item_id = base64_encode($alkatresz['motor_kod'] . $alkatresz['turbo_modell'] . ($alkatresz['alkalmassag'] ?? ''));
-                    ?>
+
+                    $teljesitmeny_from = '300';
+                    $teljesitmeny_to = '800';
+                    if (isset($alkatresz['teljesitmeny_tartomany']) && strpos($alkatresz['teljesitmeny_tartomany'], '-') !== false) {
+                        $parts = explode('-', $alkatresz['teljesitmeny_tartomany']);
+                        $teljesitmeny_from = $parts[0];
+                        $teljesitmeny_to = $parts[1];
+                    }
+            ?>
                     <div class="col-md-4">
                         <div class="kartya">
                             <i class="bi bi-turbo kartya-ikon"></i>
                             <h4><?php echo htmlspecialchars($alkatresz['motor_kod']); ?></h4>
                             <div class="kartya-adat">
-                                <p><i class="bi bi-speedometer2"></i>Teljesítmény: <?php echo htmlspecialchars($alkatresz['loero']); ?> LE</p>
-                                <p><i class="bi bi-cpu"></i>Hengerűrtartalom: <?php echo htmlspecialchars($alkatresz['hengerurtartalom']); ?> L</p>
+                                <p><i class="bi bi-car-front"></i>Gyártó: <?php echo htmlspecialchars($alkatresz['gyarto_nev']); ?></p>
                                 <p><i class="bi bi-turbine"></i>Turbó: <?php echo htmlspecialchars($alkatresz['turbo_gyarto'] . ' ' . $alkatresz['turbo_modell']); ?></p>
-                                <p><i class="bi bi-graph-up"></i>Tuning: <?php echo htmlspecialchars($alkatresz['teljesitmeny_tartomany_from'] . '-' . $alkatresz['teljesitmeny_tartomany_to']); ?> LE</p>
-                                
+                                <p><i class="bi bi-graph-up"></i>Teljesítmény: <?php echo htmlspecialchars($teljesitmeny_from . '-' . $teljesitmeny_to); ?> LE</p>
+
                                 <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <span class="badge-alkalmassag badge-<?php echo htmlspecialchars($alkatresz['alkalmassag'] ?? 'Performance'); ?>">
+                                    <span class="badge-alkalmassag badge-<?php echo str_replace(' ', '-', htmlspecialchars($alkatresz['alkalmassag'] ?? 'Performance')); ?>">
                                         <?php echo htmlspecialchars($alkatresz['alkalmassag'] ?? 'Performance'); ?>
                                     </span>
-                                    
+
                                     <form method="POST" action="kosar.php">
                                         <input type="hidden" name="item_id" value="<?php echo $item_id; ?>">
                                         <input type="hidden" name="motor_kod" value="<?php echo htmlspecialchars($alkatresz['motor_kod']); ?>">
-                                        <input type="hidden" name="loero" value="<?php echo htmlspecialchars($alkatresz['loero']); ?>">
+                                        <input type="hidden" name="gyarto" value="<?php echo htmlspecialchars($alkatresz['gyarto_nev']); ?>">
+                                        <input type="hidden" name="teljesitmeny_to" value="<?php echo htmlspecialchars($teljesitmeny_to); ?>">
                                         <input type="hidden" name="turbo" value="<?php echo htmlspecialchars($alkatresz['turbo_gyarto'] . ' ' . $alkatresz['turbo_modell']); ?>">
                                         <input type="hidden" name="alkalmassag" value="<?php echo htmlspecialchars($alkatresz['alkalmassag'] ?? 'Performance'); ?>">
                                         <button type="submit" name="add_to_cart" class="btn-add-to-cart">
@@ -832,137 +757,152 @@ $kategoria_nevek = [
                             </div>
                         </div>
                     </div>
-                    <?php
+                <?php
                 }
-                
+
                 $talalatok_szama = count($alkatreszek);
-                for ($i = $talalatok_szama; $i < 9; $i++) {
-                    ?>
+                for ($i = $talalatok_szama; $i < 12 && $i < 12; $i++) {
+                ?>
                     <div class="col-md-4">
                         <div class="kartya kartya-ures">
                             <i class="bi bi-plus-circle kartya-ikon"></i>
                             <p>Nincs több találat</p>
-                            <small>Válassz másik kategóriát</small>
+                            <small>Válassz másik márkát</small>
                         </div>
                     </div>
-                    <?php
+                <?php
                 }
-            } else if ($selected_gyarto > 0 && $selected_kategoria > 0 && empty($alkatreszek)) {
-                for ($i = 0; $i < 9; $i++) {
-                    ?>
+            } else if ($selected_gyarto > 0 && empty($alkatreszek)) {
+                for ($i = 0; $i < 12; $i++) {
+                ?>
                     <div class="col-md-4">
                         <div class="kartya kartya-ures">
                             <i class="bi bi-search kartya-ikon"></i>
                             <p>Nincs találat</p>
-                            <small>Ehhez a kategóriához nincs elérhető alkatrész</small>
+                            <small>Ehhez a márkához nincs elérhető alkatrész</small>
                         </div>
                     </div>
-                    <?php
+                <?php
                 }
             } else {
-                for ($i = 0; $i < 9; $i++) {
-                    ?>
+                for ($i = 0; $i < 12; $i++) {
+                ?>
                     <div class="col-md-4">
                         <div class="kartya kartya-ures">
                             <i class="bi bi-box-seam kartya-ikon"></i>
                             <p>Üres</p>
-                            <small>Válassz egy márkát és kategóriát</small>
+                            <small>Válassz egy márkát a bal oldali menüben</small>
                         </div>
                     </div>
-                    <?php
+            <?php
                 }
             }
             ?>
         </div>
     </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    function toggleGyarto(gyartoId) {
-        window.location.href = '?gyarto=' + gyartoId;
-    }
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        const writeOpinionBtn = document.getElementById('writeOpinionBtn');
-        if (writeOpinionBtn) {
-            writeOpinionBtn.addEventListener('click', function() {
-                const profileModal = bootstrap.Modal.getInstance(document.getElementById('profileModal'));
-                if (profileModal) profileModal.hide();
-                resetStarRating();
-                document.getElementById('opinionText').value = '';
-                const opinionModal = new bootstrap.Modal(document.getElementById('opinionModal'));
-                opinionModal.show();
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const writeOpinionBtn = document.getElementById('writeOpinionBtn');
+            if (writeOpinionBtn) {
+                writeOpinionBtn.addEventListener('click', function() {
+                    const profileModal = bootstrap.Modal.getInstance(document.getElementById('profileModal'));
+                    if (profileModal) profileModal.hide();
+                    resetStarRating();
+                    document.getElementById('opinionText').value = '';
+                    const opinionModal = new bootstrap.Modal(document.getElementById('opinionModal'));
+                    opinionModal.show();
+                });
+            }
+
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    alert('Kijelentkezés funkció fejlesztés alatt');
+                    const profileModal = bootstrap.Modal.getInstance(document.getElementById('profileModal'));
+                    if (profileModal) profileModal.hide();
+                });
+            }
+
+            const stars = document.querySelectorAll('#starRating i');
+            let selectedRating = 0;
+
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    selectedRating = parseInt(this.getAttribute('data-rating'));
+                    updateStars(selectedRating);
+                });
+                star.addEventListener('mouseenter', function() {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    previewStars(rating);
+                });
+                star.addEventListener('mouseleave', function() {
+                    previewStars(selectedRating);
+                });
             });
-        }
-        
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', function() {
-                alert('Kijelentkezés funkció fejlesztés alatt');
-                const profileModal = bootstrap.Modal.getInstance(document.getElementById('profileModal'));
-                if (profileModal) profileModal.hide();
-            });
-        }
-        
-        const stars = document.querySelectorAll('#starRating i');
-        let selectedRating = 0;
-        
-        stars.forEach(star => {
-            star.addEventListener('click', function() {
-                selectedRating = parseInt(this.getAttribute('data-rating'));
-                updateStars(selectedRating);
-            });
-            star.addEventListener('mouseenter', function() {
-                const rating = parseInt(this.getAttribute('data-rating'));
-                previewStars(rating);
-            });
-            star.addEventListener('mouseleave', function() {
-                previewStars(selectedRating);
-            });
+
+            function updateStars(rating) {
+                stars.forEach(star => {
+                    const starRating = parseInt(star.getAttribute('data-rating'));
+                    star.className = starRating <= rating ? 'bi bi-star-fill' : 'bi bi-star';
+                });
+            }
+
+            function previewStars(rating) {
+                stars.forEach(star => {
+                    const starRating = parseInt(star.getAttribute('data-rating'));
+                    star.className = starRating <= rating ? 'bi bi-star-fill' : 'bi bi-star';
+                });
+            }
+
+            function resetStarRating() {
+                selectedRating = 0;
+                stars.forEach(star => star.className = 'bi bi-star');
+            }
+
+            const submitOpinionBtn = document.getElementById('submitOpinionBtn');
+            if (submitOpinionBtn) {
+                submitOpinionBtn.addEventListener('click', function() {
+                    const opinionText = document.getElementById('opinionText').value;
+                    console.log('Vélemény:', opinionText);
+                    console.log('Értékelés:', selectedRating);
+
+                    const opinionModal = bootstrap.Modal.getInstance(document.getElementById('opinionModal'));
+                    if (opinionModal) opinionModal.hide();
+
+                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    successModal.show();
+
+                    setTimeout(function() {
+                        const successModalInstance = bootstrap.Modal.getInstance(document.getElementById('successModal'));
+                        if (successModalInstance) successModalInstance.hide();
+                    }, 2000);
+                });
+            }
+
+            // kereso
+            const searchInput = document.getElementById('site-search');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function(e) {
+                    const searchTerm = this.value.toLowerCase();
+                    const gyartoItems = document.querySelectorAll('.gyarto-fejlec');
+
+                    gyartoItems.forEach(item => {
+                        const gyartoNev = item.querySelector('span').innerText.toLowerCase();
+                        if (gyartoNev.includes(searchTerm)) {
+                            item.style.display = 'flex';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            }
         });
-        
-        function updateStars(rating) {
-            stars.forEach(star => {
-                const starRating = parseInt(star.getAttribute('data-rating'));
-                star.className = starRating <= rating ? 'bi bi-star-fill' : 'bi bi-star';
-            });
-        }
-        
-        function previewStars(rating) {
-            stars.forEach(star => {
-                const starRating = parseInt(star.getAttribute('data-rating'));
-                star.className = starRating <= rating ? 'bi bi-star-fill' : 'bi bi-star';
-            });
-        }
-        
-        function resetStarRating() {
-            selectedRating = 0;
-            stars.forEach(star => star.className = 'bi bi-star');
-        }
-        
-        const submitOpinionBtn = document.getElementById('submitOpinionBtn');
-        if (submitOpinionBtn) {
-            submitOpinionBtn.addEventListener('click', function() {
-                const opinionText = document.getElementById('opinionText').value;
-                console.log('Vélemény:', opinionText);
-                console.log('Értékelés:', selectedRating);
-                
-                const opinionModal = bootstrap.Modal.getInstance(document.getElementById('opinionModal'));
-                if (opinionModal) opinionModal.hide();
-                
-                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                successModal.show();
-                
-                setTimeout(function() {
-                    const successModalInstance = bootstrap.Modal.getInstance(document.getElementById('successModal'));
-                    if (successModalInstance) successModalInstance.hide();
-                }, 2000);
-            });
-        }
-    });
-</script>
+    </script>
 
 </body>
+
 </html>
 
 <?php
