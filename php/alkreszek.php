@@ -588,6 +588,9 @@ if ($selected_gyarto > 0) {
                 <a href="?">D.A.T.M. Tuning műhely</a>
             </div>
             <div class="col-6 ikonok">
+                <a href="../Hirek.html">
+                    <i class="bi bi-newspaper"></i>
+                </a>
                 <a href="kosar.php">
                     <i class="bi bi-cart3"></i>
                 </a>
