@@ -490,6 +490,9 @@ if ($order_success && $last_order) {
                 <a href="?">D.A.T.M. Tuning műhely</a>
             </div>
             <div class="col-3 ikonok d-flex">
+                <a href="../Hirek.html">
+                    <i class="bi bi-newspaper"></i>
+                </a>
                 <a href="kosar.php">
                     <i class="bi bi-cart3 ikkon"></i>
                 </a>
@@ -577,7 +580,7 @@ if ($order_success && $last_order) {
                         <i class="bi bi-check-circle-fill"></i>
                     </div>
                     <h5 class="mb-3">Köszönjük!</h5>
-                    <p class="mb-0">Véleményedet rögzítettük.</p>
+                    <p class="mb-0">Megrendelésedet rögzítettük.</p>
                 </div>
                 <div class="modal-footer justify-content-center">
                     <button type="button" class="btn btn-tuning" data-bs-dismiss="modal">Rendben</button>
