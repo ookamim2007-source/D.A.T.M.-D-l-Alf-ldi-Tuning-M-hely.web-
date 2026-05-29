@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            -webkit-touch-callout: none !important; 
+            -webkit-user-select: none !important;  
+            -khtml-user-select: none !important;   
+            -moz-user-select: none !important;     
+            -ms-user-select: none !important;      
+            user-select: none !important;    
+        }
+        
+        /* NAVBAR */
+        .navbar {
+            background: rgba(0, 0, 0, 0.95);
+            padding: 15px 30px;
+            border-bottom: 3px solid #f93210;
+            box-shadow: 0 4px 15px rgba(249, 50, 16, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .focim {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: left;
+            color: #f93210;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: glow 3s infinite;
+        }
+        
+        .ikonok {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .ikkon {
+            width: 24px;
+            height: 24px;
+            color: #f93210;
+            transition: all 0.3s ease;
+        }
+        
+        .ikkon:hover {
+            color: #ffffff;
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 5px #f93210);
+        }
+        
+        /* KATEGÓRIA MENÜ */
+        .oldal {
+            background: rgba(0, 0, 0, 0.85);
+            padding: 20px 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            border-bottom: 1px solid #f93210;
+            position: relative;
+            backdrop-filter: blur(5px);
+        }
+        
+        .kereso {
+            background: rgba(51, 51, 51, 0.9);
+            border: 2px solid #f93210;
+            border-radius: 25px;
+            padding: 8px 15px;
+            color: #fff;
+            width: 250px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .kereso:focus {
+            outline: none;
+            box-shadow: 0 0 10px #f93210;
+            width: 300px;
+        }
+        
+        .keresoikon {
+            position: absolute;
+            left: 255px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #f93210;
+            width: 18px;
+            height: 18px;
+            pointer-events: none;
+        }
+        
+        .oldal a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 5px 12px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .oldal a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: #f93210;
+            transition: width 0.3s ease;
+        }
+        
+        .oldal a:hover {
+            color: #f93210;
+        }
+        
+        .oldal a:hover::before {
+            width: 70%;
+        }
+        
+        .oldal a:first-of-type {
+            background: #f93210;
+            color: #000;
+            font-weight: 700;
+        }
+        
+        .oldal a:first-of-type:hover {
+            background: #ff4d2e;
+            color: #000;
+        }
+        
+        /* FŐCÍM */
+        #cim {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .HIRCIM {
+            font-size: 48px;
+            font-weight: 800;
+            color: #f93210;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7),
+                         0 0 20px rgba(249, 50, 16, 0.5);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .HIRCIM::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #f93210, transparent);
+        }
+        
+        /* MAIN TARTALOM */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .hirport {
+            display: flex;
+            gap: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(249, 50, 16, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .hir1 {
+            flex: 1;
+            background: rgba(20, 20, 20, 0.9);
+            border-radius: 12px;
+            padding: 25px;
+            border-left: 4px solid #f93210;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .hir1 p {
+            line-height: 1.8;
+            font-size: 15px;
+            color: #d0d0d0;
+            text-align: justify;
+        }
+        
+        .hir1 b {
+            font-size: 24px;
+            color: #f93210;
+            display: block;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #f93210;
+            padding-bottom: 10px;
+        }
+        
+        /* KÉP ÉS SZÖVEG KONTÉNER */
+        .kep-es-szoveg {
+            flex: 0 0 780px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        /* KÉP STÍLUS */
+        .kep-es-szoveg .kép1 {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(249, 50, 16, 0.4);
+            border: 3px solid #f93210;
+            transition: all 0.3s ease;
+        }
+        
+        .kep-es-szoveg .kép1:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 35px rgba(249, 50, 16, 0.6);
+        }
+        
+        .kep-es-szoveg .kép1 img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        
+        .kep-es-szoveg .kép1:hover img {
+            transform: scale(1.05);
+        }
+        
+        
+        .kep-alatti-szoveg {
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #f93210;
+            border-right: 1px solid rgba(249, 50, 16, 0.3);
+            border-bottom: 1px solid rgba(249, 50, 16, 0.3);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .kep-alatti-szoveg:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(249, 50, 16, 0.3);
+        }
+        
+        .kep-alatti-szoveg h3 {
+            color: #f93210;
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid #f93210;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+        
+        .kep-alatti-szoveg p {
+            color: #e0e0e0;
+            font-size: 15px;
+            line-height: 1.6;
+            text-align: justify;
+            margin: 0;
+        }
+        
+        /* FOOTER */
+        footer {
+            height: 60px;
+            background: rgba(0, 0, 0, 0.9);
+            border-top: 2px solid #f93210;
+            margin-top: 50px;
+        }
+        
+        /* VIDEÓ HÁTTÉR */
+        .video-bg-container {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        .bg-video {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translateX(-50%) translateY(-50%);
+            z-index: -2;
+            object-fit: cover;
+        }
+        
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: -1;
+        }
+        
+        .text-center, .oldal, #cim, .main, footer {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* RESZPONZÍV */
+        @media (max-width: 1200px) {
+            .hirport {
+                flex-direction: column;
+            }
+            
+            .kep-es-szoveg {
+                flex: 0 0 auto;
+                width: 100%;
+                max-width: 780px;
+                margin: 0 auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .focim {
+                font-size: 20px;
+            }
+            
+            .oldal {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .kereso {
+                width: 100%;
+            }
+            
+            .kereso:focus {
+                width: 100%;
+            }
+            
+            .keresoikon {
+                left: auto;
+                right: 15px;
+            }
+            
+            .HIRCIM {
+                font-size: 32px;
+            }
+            
+            .hir1 p {
+                font-size: 14px;
+            }
+            
+            .ikonok {
+                gap: 10px;
+            }
+            
+            .kep-alatti-szoveg h3 {
+                font-size: 18px;
+            }
+            
+            .kep-alatti-szoveg p {
+                font-size: 13px;
+            }
+        }
+        
+        
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #f93210;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff4d2e;
+        }
+        
+        
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 5px #f93210;
+            }
+            50% {
+                text-shadow: 0 0 20px #f93210, 0 0 30px #f93210;
+            }
+            100% {
+                text-shadow: 0 0 5px #f93210;
+            }
+        }
+    </style>
+    <title>Hirek - D.A.T.M. Tuning műhely</title>
+    <script>
+        document.addEventListener('contextmenu', event => event.preventDefault());
+      </script>
+</head>
+<body oncopy="return false" oncut="return false" onpaste="return false">
+
+    <div class="video-bg-container">
+      
+        <video autoplay muted loop playsinline class="bg-video">
+            <source src="YTDown.com_YouTube_BMW-M1-ProCar-w-Straight-Pipes-Pure-Soun_Media_LcltyN8KUh0_001_1080p.mp4" type="video/mp4">
+            A böngésződ nem támogatja a videó lejátszást.
+        </video>
+        <div class="video-overlay"></div>
+        
+        <div class="text-center">
+            <div class="row navbar">
+                <div class="col-9 focim">D.A.T.M. Tuning műhely</div>
+                <div class="col-3 ikonok">
+                    
+
+                    <a href="">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart3 ikkon" viewBox="0 0 16 16">
+                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                        </svg>
+                    </a>
+
+                    <a href="">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle ikkon" viewBox="0 0 16 16">
+                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                        </svg>
+                    </a>
+
+                    
+                </div>
+            </div>
+        </div>
+
+        
+
+
+        <div class="main">
+            <div class="hirport">
+                <div class="hir1">
+                    <p style="padding-left: 30px;">
+                        <b>BMW M1 E26</b>
+                        <br><br>
+                        Az 1970-es évek elején a BMW megalapította a Motorsport GmbH-t. A cég profiljához tartozott az autók hosszú távú versenyekre való felkészítése és a Túraautó-Európa-bajnokságokon résztvevő típusok kifejlesztése. A Motorsport a világ minden táján bizonyított, mára az egyik legelismertebb gyári tuning cégek egyike. Máig az egyik legelismertebb típusa az idén 40 éves M1.
+                        <br><br>
+                        A BMW versenyzésért felelős leányvállalata elsőként a CSL típussal, majd 1973-ban a 2002 Turbóval ért el jelentősebb sikereket. Ez utóbbi műszaki megoldásai hasznosultak a 3-as és 6-os kupékban és a 7-es limuzinok utcai változataiban is. A 2002 egy bajor szuperautó megszületéséhez is utat mutatott, az 1978-as M1-hez.
+                        <br><br>
+                        Akkoriban a megbízhatósági versenyek töretlen bajnoka a Porsche 911 Turbo volt. A BMW ezt rövidesen megelégelte, vissza akart vágni. Ez sikerült is az E26 kódú M1 modellel. Fejlesztése 1975-ben kezdődött, nevében az „M” a Motorsportra, az „1” a széria első tagjára utal –máig nem született újabb változat.
+                    </p>
+                </div>
+        
+                <div class="kep-es-szoveg">
+                    <div class="kép1">
+                        <img src="EAS_0097_2048x2048.webp" alt="BMW M1">
+                    </div>
+                    <div class="kep-alatti-szoveg">
+                        <h3>Porsche-gyilkos</h3>
+                        <p>A BMW M1 volt az első és egyetlen M1-es modell a BMW történetében. Ez a legendás szuperautó a 'Porsche-gyilkos' becenevet kapta, miután legyőzte a Porsche 911 Turbót a versenypályákon. A 3.5 literes soros 6 hengeres motor 277 lóerőt és 330 Nm nyomatékot produkált, ami 260 km/h-s végsebességet és 5.8 másodperces 0-100 km/h-s gyorsulást tett lehetővé. Mindössze 453 darab készült belőle, ami máig az egyik legkeresettebb klasszikus BMW-vé teszi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <footer></footer>
+    </div> 
+
+</body>
+</html>
